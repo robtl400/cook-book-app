@@ -1,0 +1,55 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+*.so
+.venv/
+venv/
+env/
+ENV/
+
+# Flask / SQLAlchemy
+instance/
+.webassets-cache
+
+# Migrations (keep the versions tracked)
+# server/migrations/versions/  ← intentionally NOT ignored (tracked in git)
+
+# Environment & secrets
+.env
+.env.local
+.env.*.local
+
+# Node / Frontend
+node_modules/
+client/dist/
+client/.vite/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# VSCode
+.vscode/
+*.code-workspace
+
+# JetBrains IDEs
+.idea/
+*.iml
+
+# Misc
+*.log
+*.swp
+*.swo
+.cache/
