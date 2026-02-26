@@ -1,1 +1,11 @@
 @import "tailwindcss";
+
+@theme {
+  --color-cream: #FAF8F4;
+  --color-cream-dark: #F0EBE1;
+  --color-burnt-orange: #C45A1E;
+  --color-burnt-orange-dark: #A34718;
+  --color-warm-tan: #E8D5B7;
+  --color-warm-brown: #6B3F2A;
+  --color-ink: #2D1B0E;
+}
