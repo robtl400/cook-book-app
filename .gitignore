@@ -54,3 +54,4 @@ yarn-error.log*
 *.swo
 .cache/
 *.local.md
+.cla*
