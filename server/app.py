@@ -36,12 +36,17 @@ def create_app():
     from routes.recipe_post_routes import recipe_post_bp
     from routes.recipe_box_routes import recipe_box_bp
     from routes.comment_routes import comment_bp
+    from routes.parse_routes import parse_bp
+    from routes.search_routes import search_bp, explore_bp
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(user_bp)
     app.register_blueprint(recipe_post_bp)
     app.register_blueprint(recipe_box_bp)
     app.register_blueprint(comment_bp)
+    app.register_blueprint(parse_bp)
+    app.register_blueprint(search_bp)
+    app.register_blueprint(explore_bp)
 
     return app
 

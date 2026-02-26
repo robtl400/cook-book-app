@@ -5,6 +5,7 @@ Requires the Flask app + DB to be configured (DATABASE_URL in .env).
 """
 from app import create_app, db
 from models.user import User
+from models.post import Post
 from models.recipe_post import RecipePost
 from models.ingredient import Ingredient
 from models.step import Step
@@ -29,8 +30,8 @@ def clear_data():
     Step.query.delete()
     RecipeBox.query.delete()
     RecipePost.query.delete()
+    Post.query.delete()
     Tag.query.delete()
-    # Post rows are deleted via cascade when RecipePost rows go away
     User.query.delete()
     db.session.commit()
 
@@ -98,7 +99,9 @@ def seed_users():
 
     # Custom boxes
     db.session.add(RecipeBox(user_id=alice.id, name="Pasta Night", box_type="custom", is_default=False))
+    db.session.add(RecipeBox(user_id=alice.id, name="Weekend Projects", box_type="custom", is_default=False))
     db.session.add(RecipeBox(user_id=bob.id, name="Grill Season", box_type="custom", is_default=False))
+    db.session.add(RecipeBox(user_id=cora.id, name="Veganize It", box_type="custom", is_default=False))
 
     return alice, bob, cora
 
@@ -206,31 +209,121 @@ def seed_posts(alice, bob, cora, tags):
     return pasta, pasta_fork, tacos
 
 
-def seed_social(alice, bob, cora, pasta, pasta_fork, tacos):
-    # Follows
+def seed_extra_posts(alice, bob, cora, pasta, pasta_fork, tacos, tags):
+    """
+    'I Cooked' posts: users cook each other's recipes with modifications.
+    """
+    # Bob cooks Cora's tacos — adds chicken, different rating
+    bob_tacos = RecipePost(
+        user_id=bob.id,
+        post_type="recipe_post",
+        title="Smoky Black Bean Tacos (with chicken)",
+        description="Cora's tacos are great but I added chicken thighs. Not vegan anymore but incredible.",
+        self_rating=3,
+        source_type="internal",
+        source_post_id=tacos.id,
+        inspo_post_id=tacos.id,
+        cook_time_minutes=30,
+        servings=4,
+        difficulty="easy",
+    )
+    db.session.add(bob_tacos)
+    db.session.flush()
+
+    db.session.add_all([
+        Ingredient(recipe_post_id=bob_tacos.id, name="black beans", quantity="2", unit="cans", sort_order=0),
+        Ingredient(recipe_post_id=bob_tacos.id, name="chicken thighs", quantity="2", unit="", sort_order=1),
+        Ingredient(recipe_post_id=bob_tacos.id, name="smoked paprika", quantity="1.5", unit="tsp", sort_order=2),
+        Ingredient(recipe_post_id=bob_tacos.id, name="cumin", quantity="1", unit="tsp", sort_order=3),
+        Ingredient(recipe_post_id=bob_tacos.id, name="corn tortillas", quantity="8", unit="", sort_order=4),
+        Ingredient(recipe_post_id=bob_tacos.id, name="avocado", quantity="1", unit="", sort_order=5),
+        Ingredient(recipe_post_id=bob_tacos.id, name="lime", quantity="1", unit="", sort_order=6),
+    ])
+    db.session.add_all([
+        Step(recipe_post_id=bob_tacos.id, body="Season and pan-fry chicken thighs 6 min per side. Slice thinly.", sort_order=0),
+        Step(recipe_post_id=bob_tacos.id, body="Add beans and spices to the same pan with chicken drippings. Cook 5 min.", sort_order=1),
+        Step(recipe_post_id=bob_tacos.id, body="Warm tortillas. Fill with beans, chicken, avocado, and squeeze of lime.", sort_order=2),
+    ])
+    db.session.add_all([
+        PostTag(post_id=bob_tacos.id, tag_id=tags["mexican"].id),
+    ])
+
+    # Alice cooks Bob's pasta fork
+    alice_pasta_cook = RecipePost(
+        user_id=alice.id,
+        post_type="recipe_post",
+        title="Cacio e Pepe with guanciale (Bob's version)",
+        description="Bob's take on my original. I had to try it. He was right — the guanciale is a game changer.",
+        self_rating=5,
+        source_type="internal",
+        source_post_id=pasta_fork.id,
+        inspo_post_id=pasta_fork.id,
+        cook_time_minutes=25,
+        servings=2,
+        difficulty="medium",
+    )
+    db.session.add(alice_pasta_cook)
+    db.session.flush()
+
+    db.session.add_all([
+        Ingredient(recipe_post_id=alice_pasta_cook.id, name="spaghetti", quantity="200", unit="g", sort_order=0),
+        Ingredient(recipe_post_id=alice_pasta_cook.id, name="guanciale", quantity="100", unit="g", sort_order=1),
+        Ingredient(recipe_post_id=alice_pasta_cook.id, name="Pecorino Romano", quantity="80", unit="g", sort_order=2),
+        Ingredient(recipe_post_id=alice_pasta_cook.id, name="Parmigiano-Reggiano", quantity="30", unit="g", sort_order=3),
+        Ingredient(recipe_post_id=alice_pasta_cook.id, name="black pepper", quantity="2", unit="tsp", sort_order=4),
+    ])
+    db.session.add_all([
+        Step(recipe_post_id=alice_pasta_cook.id, body="Render guanciale until crispy. Set aside.", sort_order=0),
+        Step(recipe_post_id=alice_pasta_cook.id, body="Cook pasta, toast pepper in guanciale fat.", sort_order=1),
+        Step(recipe_post_id=alice_pasta_cook.id, body="Toss pasta off heat with Pecorino, Parmigiano, pasta water.", sort_order=2),
+        Step(recipe_post_id=alice_pasta_cook.id, body="Top with guanciale. Added Parmigiano — sue me.", sort_order=3),
+    ])
+    db.session.add(PostTag(post_id=alice_pasta_cook.id, tag_id=tags["italian"].id))
+
+    return bob_tacos, alice_pasta_cook
+
+
+def seed_social(alice, bob, cora, pasta, pasta_fork, tacos, bob_tacos, alice_pasta_cook):
+    # Follows — expanded set
     db.session.add_all([
         Follow(follower_id=bob.id, followed_id=alice.id),
         Follow(follower_id=cora.id, followed_id=alice.id),
         Follow(follower_id=alice.id, followed_id=cora.id),
+        Follow(follower_id=bob.id, followed_id=cora.id),
+        Follow(follower_id=alice.id, followed_id=bob.id),
     ])
+    db.session.flush()
 
     # Comments
+    cora_comment = Comment(user_id=cora.id, post_id=pasta.id, body="Can I make this with nutritional yeast instead of Pecorino?")
+    db.session.add(cora_comment)
+    db.session.flush()
+
     db.session.add_all([
         Comment(user_id=bob.id, post_id=pasta.id, body="This is life-changing. The pepper-toasting step is the key!"),
-        Comment(user_id=cora.id, post_id=pasta.id, body="Can I make this with nutritional yeast instead of Pecorino?"),
-        Comment(user_id=alice.id, post_id=pasta.id, parent_id=None, body="@cora — yes! It won't be the same but it'll still be delicious."),
+        Comment(user_id=alice.id, post_id=pasta.id, parent_id=cora_comment.id, body="@cora — yes! It won't be the same but it'll still be delicious."),
         Comment(user_id=alice.id, post_id=tacos.id, body="Made these last night. Added pickled jalapeños. Outstanding."),
+        Comment(user_id=cora.id, post_id=pasta_fork.id, body="You added meat to my recipe inspiration and I'm somehow not mad about it."),
+        Comment(user_id=alice.id, post_id=bob_tacos.id, body="Glad the inspiration helped! The chicken version sounds amazing."),
+        Comment(user_id=bob.id, post_id=alice_pasta_cook.id, body="Adding Parmigiano is controversial but honestly I respect the move."),
     ])
 
-    # Save some posts to boxes (get Alice's Pasta Night box and Bob's cooked box)
+    # Box saves
     alice_pasta_box = RecipeBox.query.filter_by(user_id=alice.id, name="Pasta Night").first()
     bob_cooked_box = RecipeBox.query.filter_by(user_id=bob.id, box_type="cooked").first()
+    bob_want_box = RecipeBox.query.filter_by(user_id=bob.id, box_type="want_to_try").first()
     cora_want_box = RecipeBox.query.filter_by(user_id=cora.id, box_type="want_to_try").first()
+    cora_cooked_box = RecipeBox.query.filter_by(user_id=cora.id, box_type="cooked").first()
+    alice_cooked_box = RecipeBox.query.filter_by(user_id=alice.id, box_type="cooked").first()
 
     db.session.add_all([
         BoxPost(box_id=alice_pasta_box.id, post_id=pasta_fork.id),
         BoxPost(box_id=bob_cooked_box.id, post_id=pasta_fork.id),
+        BoxPost(box_id=bob_cooked_box.id, post_id=bob_tacos.id),
+        BoxPost(box_id=bob_want_box.id, post_id=tacos.id),
         BoxPost(box_id=cora_want_box.id, post_id=pasta.id),
+        BoxPost(box_id=cora_cooked_box.id, post_id=bob_tacos.id),
+        BoxPost(box_id=alice_cooked_box.id, post_id=alice_pasta_cook.id),
     ])
 
 
@@ -247,13 +340,16 @@ def run():
         print("Seeding recipe posts...")
         pasta, pasta_fork, tacos = seed_posts(alice, bob, cora, tags)
 
+        print("Seeding 'I Cooked' posts...")
+        bob_tacos, alice_pasta_cook = seed_extra_posts(alice, bob, cora, pasta, pasta_fork, tacos, tags)
+
         print("Seeding follows, comments, box saves...")
-        seed_social(alice, bob, cora, pasta, pasta_fork, tacos)
+        seed_social(alice, bob, cora, pasta, pasta_fork, tacos, bob_tacos, alice_pasta_cook)
 
         db.session.commit()
         print("Done! Database seeded successfully.")
         print(f"  Users: alice / bob / cora (password: password123)")
-        print(f"  Posts: {pasta.title}, {pasta_fork.title}, {tacos.title}")
+        print(f"  Posts: {pasta.title}, {pasta_fork.title}, {tacos.title}, {bob_tacos.title}, {alice_pasta_cook.title}")
 
 
 if __name__ == "__main__":

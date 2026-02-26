@@ -32,6 +32,8 @@ class RecipePostDetailSchema(SQLAlchemyAutoSchema):
     ingredients = fields.Nested(IngredientSchema, many=True, dump_only=True)
     steps = fields.Nested(StepSchema, many=True, dump_only=True)
     tags = fields.Method("get_tags", dump_only=True)
+    source_post = fields.Nested(RecipePostListSchema, dump_only=True)
+    inspo_post = fields.Nested(RecipePostListSchema, dump_only=True)
 
     def get_tags(self, obj):
         tag_schema = TagSchema(many=True)

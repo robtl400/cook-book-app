@@ -7,6 +7,11 @@ from schemas.user_schema import UserBriefSchema
 
 class CommentSchema(SQLAlchemyAutoSchema):
     user = fields.Nested(UserBriefSchema, dump_only=True)
+    replies = fields.Method("get_replies", dump_only=True)
+
+    def get_replies(self, obj):
+        # One level deep only — avoid infinite nesting
+        return CommentSchema(many=True, exclude=("replies",)).dump(obj.replies)
 
     class Meta:
         model = Comment

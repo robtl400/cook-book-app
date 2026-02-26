@@ -44,10 +44,6 @@ yarn-error.log*
 .vscode/
 *.code-workspace
 
-# JetBrains IDEs
-.idea/
-*.iml
-
 # Misc
 *.log
 *.swp
@@ -55,4 +51,4 @@ yarn-error.log*
 .cache/
 *.local.md
 .cla*
-doc*/
+docs/
