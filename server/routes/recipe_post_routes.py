@@ -17,18 +17,9 @@ from schemas.recipe_post_schema import (
     recipe_posts_list_schema,
 )
 from schemas.comment_schema import comment_schema, comments_schema
+from utils import get_pagination
 
 recipe_post_bp = Blueprint("recipe_posts", __name__, url_prefix="/api/posts")
-
-
-# ---------------------------------------------------------------------------
-# Helpers
-# ---------------------------------------------------------------------------
-
-def _get_pagination():
-    limit = min(int(request.args.get("limit", 20)), 100)
-    offset = int(request.args.get("offset", 0))
-    return limit, offset
 
 
 def _resolve_tags(tag_data):
@@ -137,7 +128,7 @@ def create_recipe():
 @recipe_post_bp.get("/feed")
 @login_required
 def feed():
-    limit, offset = _get_pagination()
+    limit, offset = get_pagination()
     followed_ids = [f.followed_id for f in current_user.following]
 
     if followed_ids:

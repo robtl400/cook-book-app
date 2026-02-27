@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
 import { api } from '../utils/api';
 import { useAuth } from '../context/AuthContext';
 
@@ -16,13 +17,16 @@ export default function SaveToBoxModal({ postId, onClose }) {
     api
       .get(`/users/${user.id}/boxes`)
       .then((data) => setBoxes(data.data ?? data))
-      .catch(() => {})
+      .catch(() => toast.error('Could not load your boxes.'))
       .finally(() => setLoading(false));
   }, [user]);
 
   async function handleToggle(boxId) {
     if (pending.has(boxId)) return;
     setPending((p) => new Set([...p, boxId]));
+
+    const box = boxes.find((b) => b.id === boxId);
+    const boxName = box?.name || 'box';
 
     if (savedBoxIds.has(boxId)) {
       // Unsave
@@ -34,13 +38,14 @@ export default function SaveToBoxModal({ postId, onClose }) {
           return next;
         });
       } catch {
-        // silent
+        toast.error('Failed to remove from box.');
       }
     } else {
       // Save
       try {
         await api.post(`/posts/${postId}/save`, { box_id: boxId });
         setSavedBoxIds((prev) => new Set([...prev, boxId]));
+        toast.success(`Saved to "${boxName}"!`);
       } catch (err) {
         if (err.status === 409) {
           // Already saved — reflect that in state
@@ -68,7 +73,7 @@ export default function SaveToBoxModal({ postId, onClose }) {
       // Auto-save this post to the new box
       await handleToggle(newBox.id);
     } catch {
-      // silent
+      toast.error('Failed to create box.');
     } finally {
       setCreatingBox(false);
     }
