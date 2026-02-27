@@ -2,16 +2,9 @@ import { useEffect, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { api } from '../utils/api';
 import PostCard from '../components/PostCard';
+import Spinner from '../components/Spinner';
 
 const LIMIT = 20;
-
-function Spinner() {
-  return (
-    <div className="flex justify-center py-10">
-      <div className="w-8 h-8 border-4 border-burnt-orange border-t-transparent rounded-full animate-spin" />
-    </div>
-  );
-}
 
 export default function FeedPage() {
   const [posts, setPosts] = useState([]);
@@ -45,7 +38,7 @@ export default function FeedPage() {
   };
 
   return (
-    <div className="max-w-2xl mx-auto px-4 py-8">
+    <div className="max-w-4xl mx-auto px-4 py-8">
       <h1 className="text-2xl font-bold text-ink mb-6">Your Feed</h1>
 
       {loading ? (
@@ -67,7 +60,7 @@ export default function FeedPage() {
         </div>
       ) : (
         <>
-          <div className="space-y-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             {posts.map((post) => (
               <PostCard key={post.id} post={post} />
             ))}

@@ -14,15 +14,10 @@ from models.recipe_box import RecipeBox
 from models.user import User
 from schemas.recipe_post_schema import recipe_posts_list_schema
 from schemas.user_schema import users_schema
+from utils import get_pagination
 
 search_bp = Blueprint("search", __name__, url_prefix="/api/search")
 explore_bp = Blueprint("explore", __name__, url_prefix="/api")
-
-
-def _get_pagination():
-    limit = min(int(request.args.get("limit", 20)), 100)
-    offset = int(request.args.get("offset", 0))
-    return limit, offset
 
 
 # ---------------------------------------------------------------------------
@@ -35,7 +30,7 @@ def search_recipes():
     if not q:
         return jsonify({"error": "q parameter is required", "message": "Failed"}), 400
 
-    limit, offset = _get_pagination()
+    limit, offset = get_pagination()
     like = f"%{q}%"
 
     # Posts matching title
@@ -76,7 +71,7 @@ def search_by_tag():
     if not tag_name:
         return jsonify({"error": "tag parameter is required", "message": "Failed"}), 400
 
-    limit, offset = _get_pagination()
+    limit, offset = get_pagination()
 
     tag_q = Tag.query.filter(Tag.name.ilike(f"%{tag_name}%"))
     if category:
@@ -115,7 +110,7 @@ def search_users():
     if not q:
         return jsonify({"error": "q parameter is required", "message": "Failed"}), 400
 
-    limit, offset = _get_pagination()
+    limit, offset = get_pagination()
     like = f"%{q}%"
 
     users = (

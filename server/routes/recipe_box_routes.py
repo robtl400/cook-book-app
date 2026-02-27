@@ -8,14 +8,9 @@ from models.recipe_post import RecipePost
 from models.post import Post
 from schemas.recipe_box_schema import recipe_box_schema, recipe_boxes_schema
 from schemas.recipe_post_schema import recipe_posts_list_schema
+from utils import get_pagination
 
 recipe_box_bp = Blueprint("recipe_boxes", __name__, url_prefix="/api/boxes")
-
-
-def _get_pagination():
-    limit = min(int(request.args.get("limit", 20)), 100)
-    offset = int(request.args.get("offset", 0))
-    return limit, offset
 
 
 # ---------------------------------------------------------------------------
@@ -52,7 +47,7 @@ def get_box(box_id):
     if not box:
         return jsonify({"error": "Box not found", "message": "Failed"}), 404
 
-    limit, offset = _get_pagination()
+    limit, offset = get_pagination()
 
     # Get recipe posts saved to this box, ordered by when they were added
     entries = (

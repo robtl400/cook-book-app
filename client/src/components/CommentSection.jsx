@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import toast from 'react-hot-toast';
 import { api } from '../utils/api';
 import { useAuth } from '../context/AuthContext';
+import Spinner from './Spinner';
 
 function timeAgo(dateStr) {
   const diff = Date.now() - new Date(dateStr).getTime();
@@ -32,16 +34,16 @@ function CommentItem({ comment, postOwnerId, onDelete, depth = 0 }) {
     if (!replyBody.trim()) return;
     setSubmittingReply(true);
     try {
-      const data = await api.post(`/posts/${comment.post_id}/comments`, {
+      const res = await api.post(`/posts/${comment.post_id}/comments`, {
         body: replyBody.trim(),
         parent_id: comment.id,
       });
-      const newReply = data.data ?? data;
+      const newReply = res.data ?? res;
       setReplies((prev) => [...prev, newReply]);
       setReplyBody('');
       setReplyOpen(false);
     } catch {
-      // silent; user can retry
+      toast.error('Failed to post reply.');
     } finally {
       setSubmittingReply(false);
     }
@@ -52,7 +54,7 @@ function CommentItem({ comment, postOwnerId, onDelete, depth = 0 }) {
       await api.delete(`/comments/${replyId}`);
       setReplies((prev) => prev.filter((r) => r.id !== replyId));
     } catch {
-      // silent
+      toast.error('Failed to delete reply.');
     }
   }
 
@@ -129,14 +131,16 @@ export default function CommentSection({ postId, postOwnerId }) {
   const { user } = useAuth();
   const [comments, setComments] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
   const [newBody, setNewBody] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
+    setLoadError(false);
     api
       .get(`/posts/${postId}/comments`)
-      .then((data) => setComments(data.data ?? data))
-      .catch(() => {})
+      .then((res) => setComments(res.data ?? res))
+      .catch(() => setLoadError(true))
       .finally(() => setLoading(false));
   }, [postId]);
 
@@ -145,14 +149,15 @@ export default function CommentSection({ postId, postOwnerId }) {
     if (!newBody.trim()) return;
     setSubmitting(true);
     try {
-      const data = await api.post(`/posts/${postId}/comments`, {
+      const res = await api.post(`/posts/${postId}/comments`, {
         body: newBody.trim(),
       });
-      const comment = data.data ?? data;
+      const comment = res.data ?? res;
       setComments((prev) => [comment, ...prev]);
       setNewBody('');
+      toast.success('Comment posted!');
     } catch {
-      // silent
+      toast.error('Failed to post comment.');
     } finally {
       setSubmitting(false);
     }
@@ -163,7 +168,7 @@ export default function CommentSection({ postId, postOwnerId }) {
       await api.delete(`/comments/${commentId}`);
       setComments((prev) => prev.filter((c) => c.id !== commentId));
     } catch {
-      // silent
+      toast.error('Failed to delete comment.');
     }
   }
 
@@ -202,9 +207,11 @@ export default function CommentSection({ postId, postOwnerId }) {
 
       {/* Comment list */}
       {loading ? (
-        <div className="flex justify-center py-6">
-          <div className="w-6 h-6 border-4 border-burnt-orange border-t-transparent rounded-full animate-spin" />
-        </div>
+        <Spinner size="sm" />
+      ) : loadError ? (
+        <p className="text-sm text-warm-brown/70 text-center py-6">
+          Couldn't load comments.
+        </p>
       ) : comments.length === 0 ? (
         <p className="text-sm text-warm-brown/70 text-center py-6">
           No comments yet. Be the first!

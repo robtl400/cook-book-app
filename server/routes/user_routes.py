@@ -10,14 +10,9 @@ from models.follow import Follow
 from schemas.user_schema import user_profile_schema, users_schema
 from schemas.recipe_post_schema import recipe_posts_list_schema
 from schemas.recipe_box_schema import recipe_boxes_schema
+from utils import get_pagination
 
 user_bp = Blueprint("users", __name__, url_prefix="/api/users")
-
-
-def _get_pagination():
-    limit = min(int(request.args.get("limit", 20)), 100)
-    offset = int(request.args.get("offset", 0))
-    return limit, offset
 
 
 # ---------------------------------------------------------------------------
@@ -63,7 +58,7 @@ def get_user_posts(user_id):
     if not user:
         return jsonify({"error": "User not found", "message": "Failed"}), 404
 
-    limit, offset = _get_pagination()
+    limit, offset = get_pagination()
     # RecipePost.query already joins `posts` via polymorphic inheritance — no explicit join needed
     posts = (
         RecipePost.query

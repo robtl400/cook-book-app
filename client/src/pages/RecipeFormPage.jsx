@@ -1,17 +1,16 @@
 import { useEffect, useRef, useState } from 'react';
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import { useForm, useFieldArray, Controller } from 'react-hook-form';
+import toast from 'react-hot-toast';
 import { useAuth } from '../context/AuthContext';
 import { api } from '../utils/api';
 import StarRating from '../components/StarRating';
+import IngredientsFields from '../components/IngredientsFields';
+import StepsFields from '../components/StepsFields';
+import TagSelector from '../components/TagSelector';
 
 const CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
 const UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
-
-const TAGS = {
-  cuisine: ['italian', 'mexican', 'japanese', 'american', 'mediterranean'],
-  dietary: ['vegan', 'vegetarian', 'gluten-free', 'dairy-free'],
-};
 
 const DEFAULT_VALUES = {
   title: '',
@@ -335,6 +334,7 @@ export default function RecipeFormPage() {
         }
       }
 
+      toast.success(mode === 'edit' ? 'Recipe updated!' : 'Recipe saved!');
       navigate(`/posts/${newPost.id}`);
     } catch (err) {
       setSubmitError(err.message ?? 'Failed to save recipe. Please try again.');
@@ -405,102 +405,22 @@ export default function RecipeFormPage() {
         </section>
 
         {/* ── Ingredients ── */}
-        <section>
-          <label className="block text-sm font-semibold text-ink mb-2">Ingredients</label>
-          <div className="space-y-2">
-            {ingFields.map((field, idx) => (
-              <div key={field.id} className="flex gap-2 items-center">
-                <input
-                  {...register(`ingredients.${idx}.quantity`)}
-                  placeholder="Qty"
-                  className="w-16 border border-warm-tan rounded px-2 py-1.5 text-sm text-ink bg-white focus:outline-none focus:ring-1 focus:ring-burnt-orange"
-                />
-                <input
-                  {...register(`ingredients.${idx}.unit`)}
-                  placeholder="Unit"
-                  className="w-20 border border-warm-tan rounded px-2 py-1.5 text-sm text-ink bg-white focus:outline-none focus:ring-1 focus:ring-burnt-orange"
-                />
-                <input
-                  {...register(`ingredients.${idx}.name`)}
-                  placeholder="Ingredient name"
-                  className="flex-1 border border-warm-tan rounded px-2 py-1.5 text-sm text-ink bg-white focus:outline-none focus:ring-1 focus:ring-burnt-orange"
-                />
-                <div className="flex flex-col">
-                  <button
-                    type="button"
-                    disabled={idx === 0}
-                    onClick={() => swapIng(idx, idx - 1)}
-                    className="text-warm-brown hover:text-ink text-xs px-0.5 disabled:opacity-30"
-                  >↑</button>
-                  <button
-                    type="button"
-                    disabled={idx === ingFields.length - 1}
-                    onClick={() => swapIng(idx, idx + 1)}
-                    className="text-warm-brown hover:text-ink text-xs px-0.5 disabled:opacity-30"
-                  >↓</button>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => removeIng(idx)}
-                  className="text-warm-brown hover:text-burnt-orange text-lg leading-none"
-                >×</button>
-              </div>
-            ))}
-          </div>
-          <button
-            type="button"
-            onClick={() => appendIng({ quantity: '', unit: '', name: '' })}
-            className="mt-2 text-sm text-burnt-orange hover:text-burnt-orange-dark font-medium"
-          >
-            + Add Ingredient
-          </button>
-        </section>
+        <IngredientsFields
+          register={register}
+          fields={ingFields}
+          append={appendIng}
+          remove={removeIng}
+          swap={swapIng}
+        />
 
         {/* ── Steps ── */}
-        <section>
-          <label className="block text-sm font-semibold text-ink mb-2">Steps</label>
-          <div className="space-y-3">
-            {stepFields.map((field, idx) => (
-              <div key={field.id} className="flex gap-2 items-start">
-                <span className="mt-2 w-6 text-sm font-semibold text-warm-brown flex-shrink-0">
-                  {idx + 1}.
-                </span>
-                <textarea
-                  {...register(`steps.${idx}.body`)}
-                  rows={2}
-                  placeholder={`Describe step ${idx + 1}...`}
-                  className="flex-1 border border-warm-tan rounded px-2 py-1.5 text-sm text-ink bg-white focus:outline-none focus:ring-1 focus:ring-burnt-orange resize-none"
-                />
-                <div className="flex flex-col mt-1">
-                  <button
-                    type="button"
-                    disabled={idx === 0}
-                    onClick={() => swapStep(idx, idx - 1)}
-                    className="text-warm-brown hover:text-ink text-xs px-0.5 disabled:opacity-30"
-                  >↑</button>
-                  <button
-                    type="button"
-                    disabled={idx === stepFields.length - 1}
-                    onClick={() => swapStep(idx, idx + 1)}
-                    className="text-warm-brown hover:text-ink text-xs px-0.5 disabled:opacity-30"
-                  >↓</button>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => removeStep(idx)}
-                  className="text-warm-brown hover:text-burnt-orange text-lg leading-none mt-1"
-                >×</button>
-              </div>
-            ))}
-          </div>
-          <button
-            type="button"
-            onClick={() => appendStep({ body: '' })}
-            className="mt-2 text-sm text-burnt-orange hover:text-burnt-orange-dark font-medium"
-          >
-            + Add Step
-          </button>
-        </section>
+        <StepsFields
+          register={register}
+          fields={stepFields}
+          append={appendStep}
+          remove={removeStep}
+          swap={swapStep}
+        />
 
         {/* ── Attribution ── */}
         <section>
@@ -791,33 +711,7 @@ export default function RecipeFormPage() {
         </section>
 
         {/* ── Tags ── */}
-        <section>
-          <label className="block text-sm font-semibold text-ink mb-2">Tags</label>
-          {Object.entries(TAGS).map(([category, names]) => (
-            <div key={category} className="mb-3">
-              <p className="text-xs text-warm-brown capitalize mb-1.5">{category}</p>
-              <div className="flex flex-wrap gap-2">
-                {names.map(name => {
-                  const active = watchTagNames?.includes(name);
-                  return (
-                    <button
-                      key={name}
-                      type="button"
-                      onClick={() => toggleTag(name)}
-                      className={`px-3 py-1 rounded-full text-sm font-medium border transition-colors ${
-                        active
-                          ? 'bg-burnt-orange text-white border-burnt-orange'
-                          : 'bg-white text-warm-brown border-warm-tan hover:border-burnt-orange'
-                      }`}
-                    >
-                      {name}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          ))}
-        </section>
+        <TagSelector selectedTags={watchTagNames} onToggle={toggleTag} />
 
         {/* ── Submit ── */}
         {submitError && (

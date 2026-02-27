@@ -1,5 +1,4 @@
 import re
-import ssl
 
 from flask import Blueprint, request, jsonify
 

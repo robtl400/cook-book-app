@@ -7,14 +7,6 @@ import AttributionBadge from '../components/AttributionBadge';
 import CommentSection from '../components/CommentSection';
 import SaveToBoxModal from '../components/SaveToBoxModal';
 
-function Spinner() {
-  return (
-    <div className="flex justify-center py-20">
-      <div className="w-10 h-10 border-4 border-burnt-orange border-t-transparent rounded-full animate-spin" />
-    </div>
-  );
-}
-
 function DifficultyBadge({ difficulty }) {
   const colors = {
     easy: 'bg-green-100 text-green-700',
@@ -63,7 +55,11 @@ export default function PostDetailPage() {
     }
   }
 
-  if (loading) return <Spinner />;
+  if (loading) return (
+    <div className="flex justify-center py-20">
+      <div className="w-10 h-10 border-4 border-burnt-orange border-t-transparent rounded-full animate-spin" />
+    </div>
+  );
 
   if (error || !post) {
     return (
