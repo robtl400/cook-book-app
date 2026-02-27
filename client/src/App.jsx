@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from './context/AuthContext';
 import NavBar from './components/NavBar';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -20,6 +21,7 @@ export default function App() {
     <AuthProvider>
       <BrowserRouter>
         <NavBar />
+        <Toaster position="bottom-right" toastOptions={{ duration: 3000 }} />
         <main className="min-h-screen bg-cream pt-16">
           <Routes>
             <Route path="/" element={<LandingPage />} />

@@ -5,7 +5,7 @@
  *  - Sets Content-Type: application/json for non-GET requests
  *  - Throws on non-2xx responses so callers can catch errors uniformly
  */
-const BASE = "/api";
+const BASE = (import.meta.env.VITE_API_URL || "") + "/api";
 
 async function request(method, path, body) {
   const options = {

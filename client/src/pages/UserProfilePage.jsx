@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
+import toast from 'react-hot-toast';
 import { useAuth } from '../context/AuthContext';
 import { api } from '../utils/api';
 import PostCard from '../components/PostCard';
@@ -197,8 +198,10 @@ export default function UserProfilePage() {
     try {
       if (wasFollowing) {
         await api.delete(`/users/${id}/follow`);
+        toast.success('Unfollowed.');
       } else {
         await api.post(`/users/${id}/follow`);
+        toast.success(`Following ${profile?.display_name || profile?.username}!`);
       }
     } catch (err) {
       // Revert optimistic update
@@ -350,6 +353,7 @@ export default function UserProfilePage() {
           onSave={updated => {
             setProfile(prev => ({ ...prev, ...updated }));
             setShowEditModal(false);
+            toast.success('Profile updated!');
           }}
         />
       )}
