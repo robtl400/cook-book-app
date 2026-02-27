@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
+import toast from 'react-hot-toast';
 import { useAuth } from '../context/AuthContext';
 import { api } from '../utils/api';
 import PostCard from '../components/PostCard';
@@ -66,6 +67,7 @@ export default function RecipeBoxDetailPage() {
       const updated = res.data ?? res;
       setBox(prev => ({ ...prev, ...updated }));
       setEditing(false);
+      toast.success('Box updated!');
     } catch (err) {
       setEditError(err.message ?? 'Could not save changes.');
     } finally {
