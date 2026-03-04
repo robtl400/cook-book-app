@@ -1,6 +1,5 @@
 from flask import Blueprint, request, jsonify
 from flask_login import login_required, current_user
-from sqlalchemy import case, func, literal
 
 from app import db
 from models.post import Post
@@ -131,17 +130,14 @@ def feed():
     limit, offset = get_pagination()
     followed_ids = [f.followed_id for f in current_user.following]
 
-    if followed_ids:
-        weight = case((Post.user_id.in_(followed_ids), 2), else_=1)
-    else:
-        weight = literal(1)
-
-    score = weight * func.extract("epoch", Post.created_at)
+    if not followed_ids:
+        return jsonify({"data": [], "message": "Success"}), 200
 
     # RecipePost.query already joins `posts` via polymorphic inheritance — no explicit join needed
     posts = (
         RecipePost.query
-        .order_by(score.desc())
+        .filter(Post.user_id.in_(followed_ids))
+        .order_by(Post.created_at.desc())
         .offset(offset)
         .limit(limit)
         .all()

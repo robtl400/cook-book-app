@@ -48,15 +48,18 @@ export default function FeedPage() {
           <p>{error}</p>
         </div>
       ) : posts.length === 0 ? (
-        <div className="text-center py-16 text-text-muted">
-          <p className="text-lg mb-2">Your feed is empty.</p>
-          <p className="text-sm">
-            Follow some cooks to fill your feed! Check out the{' '}
-            <Link to="/explore" className="text-accent hover:underline font-medium">
-              Explore page
-            </Link>
-            .
+        <div className="flex flex-col items-center justify-center py-24 text-center">
+          <div className="text-5xl mb-4">🍳</div>
+          <h2 className="text-xl font-semibold text-text mb-2">Your feed is empty</h2>
+          <p className="text-text-muted text-sm mb-6 max-w-xs">
+            Follow some cooks to see their recipes here. Discover what people are making on the Explore page.
           </p>
+          <Link
+            to="/explore"
+            className="px-5 py-2 bg-cta text-white rounded-sm text-sm font-medium hover:opacity-90 transition-opacity"
+          >
+            Browse Explore
+          </Link>
         </div>
       ) : (
         <>
