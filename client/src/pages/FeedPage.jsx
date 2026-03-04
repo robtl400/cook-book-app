@@ -39,20 +39,20 @@ export default function FeedPage() {
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
-      <h1 className="text-2xl font-bold text-ink mb-6">Your Feed</h1>
+      <h1 className="text-2xl font-bold text-text mb-6">Your Feed</h1>
 
       {loading ? (
         <Spinner />
       ) : error ? (
-        <div className="text-center py-10 text-warm-brown">
+        <div className="text-center py-10 text-text-muted">
           <p>{error}</p>
         </div>
       ) : posts.length === 0 ? (
-        <div className="text-center py-16 text-warm-brown">
+        <div className="text-center py-16 text-text-muted">
           <p className="text-lg mb-2">Your feed is empty.</p>
           <p className="text-sm">
             Follow some cooks to fill your feed! Check out the{' '}
-            <Link to="/explore" className="text-burnt-orange hover:underline font-medium">
+            <Link to="/explore" className="text-accent hover:underline font-medium">
               Explore page
             </Link>
             .
@@ -71,7 +71,7 @@ export default function FeedPage() {
               <button
                 onClick={handleLoadMore}
                 disabled={loadingMore}
-                className="px-6 py-2 border border-warm-tan text-warm-brown rounded-lg hover:border-burnt-orange hover:text-burnt-orange disabled:opacity-60 transition-colors text-sm font-medium"
+                className="px-6 py-2 border border-border text-text-muted rounded-sm hover:border-cta hover:text-accent disabled:opacity-60 transition-colors text-sm font-medium"
               >
                 {loadingMore ? 'Loading…' : 'Load more'}
               </button>

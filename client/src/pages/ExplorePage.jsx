@@ -6,7 +6,7 @@ import Spinner from '../components/Spinner';
 function PostRow({ posts }) {
   if (posts.length === 0) {
     return (
-      <p className="text-warm-brown text-sm py-4">
+      <p className="text-text-muted text-sm py-4">
         No trending recipes yet — be the first to cook something!
       </p>
     );
@@ -49,18 +49,18 @@ export default function ExplorePage() {
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-ink mb-1">Explore</h1>
-        <p className="text-warm-brown">Discover what the CookBook community is saving and cooking.</p>
+        <h1 className="text-3xl font-bold text-text mb-1">Explore</h1>
+        <p className="text-text-muted">Discover what the CookBook community is saving and cooking.</p>
       </div>
 
       {loading ? (
         <Spinner />
       ) : error ? (
         <div className="py-16 text-center">
-          <p className="text-warm-brown mb-3">{error}</p>
+          <p className="text-text-muted mb-3">{error}</p>
           <button
             onClick={load}
-            className="text-sm text-burnt-orange hover:underline"
+            className="text-sm text-accent hover:underline"
           >
             Try again
           </button>
@@ -69,16 +69,16 @@ export default function ExplorePage() {
         <div className="space-y-12">
           <section>
             <div className="flex items-baseline gap-2 mb-4">
-              <h2 className="text-xl font-bold text-ink">Most Saved</h2>
-              <span className="text-sm text-warm-brown">— last 30 days</span>
+              <h2 className="text-xl font-bold text-text">Most Saved</h2>
+              <span className="text-sm text-text-muted">— last 30 days</span>
             </div>
             <PostRow posts={mostSaved} />
           </section>
 
           <section>
             <div className="flex items-baseline gap-2 mb-4">
-              <h2 className="text-xl font-bold text-ink">Most Cooked</h2>
-              <span className="text-sm text-warm-brown">— last 30 days</span>
+              <h2 className="text-xl font-bold text-text">Most Cooked</h2>
+              <span className="text-sm text-text-muted">— last 30 days</span>
             </div>
             <PostRow posts={mostCooked} />
           </section>

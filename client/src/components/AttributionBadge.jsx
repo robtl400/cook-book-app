@@ -24,7 +24,7 @@ export default function AttributionBadge({
   compact = false,
 }) {
   const textSize = compact ? 'text-xs' : 'text-sm';
-  const baseClass = `inline-flex items-center gap-1 ${textSize} text-warm-brown`;
+  const baseClass = `inline-flex items-center gap-1 ${textSize} text-text-muted`;
 
   function truncateUrl(url) {
     try {
@@ -40,7 +40,7 @@ export default function AttributionBadge({
 
   if (sourceType === 'original') {
     sourceNode = (
-      <span className={`${baseClass} bg-cream-dark px-2 py-0.5 rounded-full font-medium`}>
+      <span className={`${baseClass} bg-surface-input px-2 py-0.5 rounded-full font-medium`}>
         <span>✦</span>
         <span>Original Recipe</span>
       </span>
@@ -52,7 +52,7 @@ export default function AttributionBadge({
         target="_blank"
         rel="noopener noreferrer"
         onClick={(e) => e.stopPropagation()}
-        className={`${baseClass} hover:text-burnt-orange transition-colors`}
+        className={`${baseClass} hover:text-accent transition-colors`}
       >
         <span>↗</span>
         <span>{truncateUrl(sourceUrl)}</span>
@@ -66,7 +66,7 @@ export default function AttributionBadge({
       <Link
         to={`/posts/${postId}`}
         onClick={(e) => e.stopPropagation()}
-        className={`${baseClass} hover:text-burnt-orange transition-colors`}
+        className={`${baseClass} hover:text-accent transition-colors`}
       >
         <span>↩</span>
         <span>Based on {postTitle ? `"${postTitle}"` : 'another recipe'}</span>
@@ -87,7 +87,7 @@ export default function AttributionBadge({
       <Link
         to={`/posts/${inspoPost.id}`}
         onClick={(e) => e.stopPropagation()}
-        className={`${baseClass} hover:text-burnt-orange transition-colors`}
+        className={`${baseClass} hover:text-accent transition-colors`}
       >
         <span>✦</span>
         <span>Inspired by {inspoPost.user?.username ?? 'another cook'}</span>
@@ -98,7 +98,7 @@ export default function AttributionBadge({
       <Link
         to={`/posts/${inspoPostId}`}
         onClick={(e) => e.stopPropagation()}
-        className={`${baseClass} hover:text-burnt-orange transition-colors`}
+        className={`${baseClass} hover:text-accent transition-colors`}
       >
         <span>✦</span>
         <span>Inspired by another cook</span>

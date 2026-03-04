@@ -22,7 +22,7 @@ export default function App() {
       <BrowserRouter>
         <NavBar />
         <Toaster position="bottom-right" toastOptions={{ duration: 3000 }} />
-        <main className="min-h-screen bg-cream pt-16">
+        <main className="min-h-screen bg-surface pt-16">
           <Routes>
             <Route path="/" element={<LandingPage />} />
             <Route path="/login" element={<LoginPage />} />

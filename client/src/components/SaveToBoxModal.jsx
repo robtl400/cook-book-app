@@ -82,20 +82,20 @@ export default function SaveToBoxModal({ postId, onClose }) {
   return (
     // Backdrop
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4"
       onClick={onClose}
     >
       {/* Modal card */}
       <div
-        className="bg-white rounded-xl shadow-xl w-full max-w-sm overflow-hidden"
+        className="bg-surface-raised rounded shadow-xl w-full max-w-sm overflow-hidden border border-border"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-5 py-4 border-b border-warm-tan">
-          <h2 className="font-semibold text-ink">Save to box</h2>
+        <div className="flex items-center justify-between px-5 py-4 border-b border-border">
+          <h2 className="font-semibold text-text">Save to box</h2>
           <button
             onClick={onClose}
-            className="text-warm-brown hover:text-ink transition-colors text-lg leading-none"
+            className="text-text-muted hover:text-text transition-colors text-lg leading-none"
             aria-label="Close"
           >
             ×
@@ -106,10 +106,10 @@ export default function SaveToBoxModal({ postId, onClose }) {
         <div className="px-5 py-3 max-h-64 overflow-y-auto">
           {loading ? (
             <div className="flex justify-center py-6">
-              <div className="w-6 h-6 border-4 border-burnt-orange border-t-transparent rounded-full animate-spin" />
+              <div className="w-6 h-6 border-4 border-accent border-t-transparent rounded-full animate-spin" />
             </div>
           ) : boxes.length === 0 ? (
-            <p className="text-sm text-warm-brown text-center py-4">No boxes yet.</p>
+            <p className="text-sm text-text-muted text-center py-4">No boxes yet.</p>
           ) : (
             <ul className="space-y-1">
               {boxes.map((box) => {
@@ -123,16 +123,16 @@ export default function SaveToBoxModal({ postId, onClose }) {
                         checked={checked}
                         disabled={busy}
                         onChange={() => handleToggle(box.id)}
-                        className="w-4 h-4 accent-burnt-orange rounded cursor-pointer"
+                        className="w-4 h-4 accent-cta rounded cursor-pointer"
                       />
-                      <span className="text-sm text-ink group-hover:text-burnt-orange transition-colors flex-1">
+                      <span className="text-sm text-text group-hover:text-accent transition-colors flex-1">
                         {box.name}
                       </span>
                       {box.is_default && (
-                        <span className="text-xs text-warm-brown/60">{box.box_type}</span>
+                        <span className="text-xs text-text-dim">{box.box_type}</span>
                       )}
                       {busy && (
-                        <span className="w-4 h-4 border-2 border-burnt-orange border-t-transparent rounded-full animate-spin" />
+                        <span className="w-4 h-4 border-2 border-accent border-t-transparent rounded-full animate-spin" />
                       )}
                     </label>
                   </li>
@@ -143,19 +143,19 @@ export default function SaveToBoxModal({ postId, onClose }) {
         </div>
 
         {/* Create new box */}
-        <div className="px-5 py-4 border-t border-warm-tan bg-cream/50">
+        <div className="px-5 py-4 border-t border-border bg-surface/50">
           <form onSubmit={handleCreateBox} className="flex gap-2">
             <input
               type="text"
               value={newBoxName}
               onChange={(e) => setNewBoxName(e.target.value)}
               placeholder="New box name…"
-              className="flex-1 px-3 py-1.5 text-sm border border-warm-tan rounded-md bg-white text-ink focus:outline-none focus:border-burnt-orange"
+              className="flex-1 px-3 py-1.5 text-sm border border-border rounded bg-surface-input text-text focus:outline-none focus:border-cta"
             />
             <button
               type="submit"
               disabled={creatingBox || !newBoxName.trim()}
-              className="px-3 py-1.5 text-sm bg-burnt-orange text-white rounded-md hover:bg-burnt-orange-dark disabled:opacity-60 transition-colors font-medium shrink-0"
+              className="px-3 py-1.5 text-sm bg-cta text-white rounded-sm hover:bg-cta-dark disabled:opacity-60 transition-colors font-medium shrink-0"
             >
               {creatingBox ? '…' : 'Create'}
             </button>
