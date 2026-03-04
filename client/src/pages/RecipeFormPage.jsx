@@ -346,7 +346,7 @@ export default function RecipeFormPage() {
   if (pageLoading) {
     return (
       <div className="flex justify-center items-center min-h-[60vh]">
-        <div className="w-8 h-8 border-4 border-burnt-orange border-t-transparent rounded-full animate-spin" />
+        <div className="w-8 h-8 border-4 border-accent border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
@@ -354,7 +354,7 @@ export default function RecipeFormPage() {
   if (pageError) {
     return (
       <div className="max-w-2xl mx-auto px-4 py-10 text-center">
-        <p className="text-red-500">{pageError}</p>
+        <p className="text-red-400">{pageError}</p>
       </div>
     );
   }
@@ -363,9 +363,9 @@ export default function RecipeFormPage() {
 
   return (
     <div className="max-w-2xl mx-auto px-4 py-10">
-      <h1 className="text-3xl font-bold text-ink mb-1">{modeLabel}</h1>
+      <h1 className="text-3xl font-bold text-text mb-1">{modeLabel}</h1>
       {mode === 'cook' && sourcePost && (
-        <p className="text-warm-brown mb-6 text-sm">
+        <p className="text-text-muted mb-6 text-sm">
           Based on <span className="font-semibold">{sourcePost.title}</span>
           {sourcePost.user?.display_name && (
             <> by {sourcePost.user.display_name}</>
@@ -377,31 +377,31 @@ export default function RecipeFormPage() {
 
         {/* ── Title ── */}
         <section>
-          <label className="block text-sm font-semibold text-ink mb-1">
-            Title <span className="text-burnt-orange">*</span>
+          <label className="block text-sm font-semibold text-text mb-1">
+            Title <span className="text-accent">*</span>
           </label>
           <input
             {...register('title', { required: 'Title is required' })}
-            className="w-full border border-warm-tan rounded-lg px-3 py-2 text-ink bg-white focus:outline-none focus:ring-2 focus:ring-burnt-orange"
+            className="w-full border border-border rounded px-3 py-2 text-text bg-surface-input focus:outline-none focus:ring-2 focus:ring-cta"
             placeholder="Give your recipe a name"
           />
-          {errors.title && <p className="text-red-500 text-sm mt-1">{errors.title.message}</p>}
+          {errors.title && <p className="text-red-400 text-sm mt-1">{errors.title.message}</p>}
         </section>
 
         {/* ── Description ── */}
         <section>
-          <label className="block text-sm font-semibold text-ink mb-1">Description</label>
+          <label className="block text-sm font-semibold text-text mb-1">Description</label>
           <textarea
             {...register('description', { maxLength: { value: 500, message: 'Max 500 characters' } })}
             rows={3}
             maxLength={500}
-            className="w-full border border-warm-tan rounded-lg px-3 py-2 text-ink bg-white focus:outline-none focus:ring-2 focus:ring-burnt-orange resize-none"
+            className="w-full border border-border rounded px-3 py-2 text-text bg-surface-input focus:outline-none focus:ring-2 focus:ring-cta resize-none"
             placeholder="What makes this recipe special?"
           />
-          <p className="text-xs text-warm-brown text-right mt-0.5">
+          <p className="text-xs text-text-dim text-right mt-0.5">
             {watchDescription?.length ?? 0}/500
           </p>
-          {errors.description && <p className="text-red-500 text-sm mt-1">{errors.description.message}</p>}
+          {errors.description && <p className="text-red-400 text-sm mt-1">{errors.description.message}</p>}
         </section>
 
         {/* ── Ingredients ── */}
@@ -424,10 +424,10 @@ export default function RecipeFormPage() {
 
         {/* ── Attribution ── */}
         <section>
-          <label className="block text-sm font-semibold text-ink mb-2">Recipe Source</label>
+          <label className="block text-sm font-semibold text-text mb-2">Recipe Source</label>
 
           {mode === 'cook' ? (
-            <div className="bg-cream-dark rounded-lg p-3 text-sm text-warm-brown">
+            <div className="bg-surface-input rounded p-3 text-sm text-text-muted">
               <span className="font-medium">Based on:</span>{' '}
               {sourcePost?.title ?? `Post #${id}`}
               {sourcePost?.user?.display_name && (
@@ -449,9 +449,9 @@ export default function RecipeFormPage() {
                       type="radio"
                       value={opt.value}
                       {...register('source_type')}
-                      className="accent-burnt-orange"
+                      className="accent-cta"
                     />
-                    <span className="text-sm text-ink">{opt.label}</span>
+                    <span className="text-sm text-text">{opt.label}</span>
                   </label>
                 ))}
               </div>
@@ -463,18 +463,18 @@ export default function RecipeFormPage() {
                     <input
                       {...register('source_url')}
                       placeholder="https://..."
-                      className="flex-1 border border-warm-tan rounded px-3 py-2 text-sm text-ink bg-white focus:outline-none focus:ring-1 focus:ring-burnt-orange"
+                      className="flex-1 border border-border rounded px-3 py-2 text-sm text-text bg-surface-input focus:outline-none focus:ring-1 focus:ring-cta"
                     />
                     <button
                       type="button"
                       onClick={handleParseUrl}
                       disabled={parseLoading || !watchSourceUrl}
-                      className="px-3 py-2 bg-burnt-orange text-white text-sm rounded hover:bg-burnt-orange-dark disabled:opacity-50 whitespace-nowrap"
+                      className="px-3 py-2 bg-cta text-white text-sm rounded-sm hover:bg-cta-dark disabled:opacity-50 whitespace-nowrap"
                     >
                       {parseLoading ? 'Parsing…' : 'Parse Recipe'}
                     </button>
                   </div>
-                  {parseError && <p className="text-red-500 text-sm">{parseError}</p>}
+                  {parseError && <p className="text-red-400 text-sm">{parseError}</p>}
                   {parsedImageUrl && !imagePreview && (
                     <img
                       src={parsedImageUrl}
@@ -496,15 +496,15 @@ export default function RecipeFormPage() {
                       handleSourceSearch(e.target.value);
                     }}
                     placeholder="Search CookBook recipes…"
-                    className="w-full border border-warm-tan rounded px-3 py-2 text-sm text-ink bg-white focus:outline-none focus:ring-1 focus:ring-burnt-orange"
+                    className="w-full border border-border rounded px-3 py-2 text-sm text-text bg-surface-input focus:outline-none focus:ring-1 focus:ring-cta"
                   />
                   {sourceResults.length > 0 && !sourceSelected && (
-                    <ul className="absolute z-10 w-full bg-white border border-warm-tan rounded mt-1 shadow-lg max-h-44 overflow-y-auto">
+                    <ul className="absolute z-10 w-full bg-surface-raised border border-border rounded mt-1 shadow-lg max-h-44 overflow-y-auto">
                       {sourceResults.map(r => (
                         <li key={r.id}>
                           <button
                             type="button"
-                            className="w-full text-left px-3 py-2 text-sm hover:bg-cream-dark"
+                            className="w-full text-left px-3 py-2 text-sm text-text hover:bg-surface-input"
                             onClick={() => {
                               setSourceSelected(r);
                               setValue('source_post_id', r.id);
@@ -514,7 +514,7 @@ export default function RecipeFormPage() {
                           >
                             {r.title}
                             {r.user?.display_name && (
-                              <span className="text-warm-brown"> — {r.user.display_name}</span>
+                              <span className="text-text-muted"> — {r.user.display_name}</span>
                             )}
                           </button>
                         </li>
@@ -529,7 +529,7 @@ export default function RecipeFormPage() {
                 <input
                   {...register('source_credit')}
                   placeholder="e.g. Alison Roman — Nothing Fancy, p. 42"
-                  className="w-full border border-warm-tan rounded px-3 py-2 text-sm text-ink bg-white focus:outline-none focus:ring-1 focus:ring-burnt-orange"
+                  className="w-full border border-border rounded px-3 py-2 text-sm text-text bg-surface-input focus:outline-none focus:ring-1 focus:ring-cta"
                 />
               )}
             </>
@@ -537,11 +537,11 @@ export default function RecipeFormPage() {
 
           {/* Inspo field */}
           <div className="mt-4">
-            <label className="block text-xs font-semibold text-warm-brown mb-1">
+            <label className="block text-xs font-semibold text-text-muted mb-1">
               Inspiration (optional)
             </label>
             {mode === 'cook' ? (
-              <p className="text-sm text-warm-brown italic">Inspiration from the original post.</p>
+              <p className="text-sm text-text-muted italic">Inspiration from the original post.</p>
             ) : (
               <div className="relative">
                 <input
@@ -552,15 +552,15 @@ export default function RecipeFormPage() {
                     handleInspoSearch(e.target.value);
                   }}
                   placeholder="Link to an inspiring recipe on CookBook…"
-                  className="w-full border border-warm-tan rounded px-3 py-2 text-sm text-ink bg-white focus:outline-none focus:ring-1 focus:ring-burnt-orange"
+                  className="w-full border border-border rounded px-3 py-2 text-sm text-text bg-surface-input focus:outline-none focus:ring-1 focus:ring-cta"
                 />
                 {inspoResults.length > 0 && !inspoSelected && (
-                  <ul className="absolute z-10 w-full bg-white border border-warm-tan rounded mt-1 shadow-lg max-h-44 overflow-y-auto">
+                  <ul className="absolute z-10 w-full bg-surface-raised border border-border rounded mt-1 shadow-lg max-h-44 overflow-y-auto">
                     {inspoResults.map(r => (
                       <li key={r.id}>
                         <button
                           type="button"
-                          className="w-full text-left px-3 py-2 text-sm hover:bg-cream-dark"
+                          className="w-full text-left px-3 py-2 text-sm text-text hover:bg-surface-input"
                           onClick={() => {
                             setInspoSelected(r);
                             setValue('inspo_post_id', r.id);
@@ -570,7 +570,7 @@ export default function RecipeFormPage() {
                         >
                           {r.title}
                           {r.user?.display_name && (
-                            <span className="text-warm-brown"> — {r.user.display_name}</span>
+                            <span className="text-text-muted"> — {r.user.display_name}</span>
                           )}
                         </button>
                       </li>
@@ -584,14 +584,14 @@ export default function RecipeFormPage() {
 
         {/* ── Image ── */}
         <section>
-          <label className="block text-sm font-semibold text-ink mb-2">Photo</label>
+          <label className="block text-sm font-semibold text-text mb-2">Photo</label>
 
           {imagePreview ? (
             <div className="relative">
               <img
                 src={imagePreview}
                 alt="Recipe photo preview"
-                className="w-full h-52 object-cover rounded-lg"
+                className="w-full h-52 object-cover rounded"
               />
               <button
                 type="button"
@@ -608,7 +608,7 @@ export default function RecipeFormPage() {
                   <img
                     src={parsedImageUrl}
                     alt="Source recipe"
-                    className="w-full h-52 object-cover rounded-lg opacity-50"
+                    className="w-full h-52 object-cover rounded opacity-50"
                   />
                   <p className="absolute bottom-2 left-2 text-white text-xs bg-black/60 px-2 py-1 rounded">
                     Upload your own photo to replace this.
@@ -618,18 +618,18 @@ export default function RecipeFormPage() {
 
               {CLOUD_NAME && UPLOAD_PRESET ? (
                 <div
-                  className="border-2 border-dashed border-warm-tan rounded-lg p-8 text-center cursor-pointer hover:border-burnt-orange transition-colors"
+                  className="border-2 border-dashed border-border rounded p-8 text-center cursor-pointer hover:border-cta transition-colors"
                   onClick={() => fileInputRef.current?.click()}
                 >
                   {imageUploading ? (
                     <div className="flex flex-col items-center gap-2">
-                      <div className="w-6 h-6 border-2 border-burnt-orange border-t-transparent rounded-full animate-spin" />
-                      <p className="text-sm text-warm-brown">Uploading…</p>
+                      <div className="w-6 h-6 border-2 border-accent border-t-transparent rounded-full animate-spin" />
+                      <p className="text-sm text-text-muted">Uploading…</p>
                     </div>
                   ) : (
                     <>
-                      <p className="text-warm-brown text-sm">Drop an image here or click to upload</p>
-                      <p className="text-xs text-warm-tan mt-1">JPG, PNG, WEBP</p>
+                      <p className="text-text-muted text-sm">Drop an image here or click to upload</p>
+                      <p className="text-xs text-text-dim mt-1">JPG, PNG, WEBP</p>
                     </>
                   )}
                   <input
@@ -645,18 +645,18 @@ export default function RecipeFormPage() {
                 <input
                   {...register('image_url')}
                   placeholder="https://example.com/photo.jpg"
-                  className="w-full border border-warm-tan rounded px-3 py-2 text-sm text-ink bg-white focus:outline-none focus:ring-1 focus:ring-burnt-orange"
+                  className="w-full border border-border rounded px-3 py-2 text-sm text-text bg-surface-input focus:outline-none focus:ring-1 focus:ring-cta"
                 />
               )}
-              {imageError && <p className="text-red-500 text-sm mt-1">{imageError}</p>}
+              {imageError && <p className="text-red-400 text-sm mt-1">{imageError}</p>}
             </>
           )}
         </section>
 
         {/* ── Self-rating ── */}
         <section>
-          <label className="block text-sm font-semibold text-ink mb-2">
-            Your Rating <span className="text-burnt-orange">*</span>
+          <label className="block text-sm font-semibold text-text mb-2">
+            Your Rating <span className="text-accent">*</span>
           </label>
           <Controller
             name="self_rating"
@@ -667,39 +667,39 @@ export default function RecipeFormPage() {
             )}
           />
           {errors.self_rating && (
-            <p className="text-red-500 text-sm mt-1">{errors.self_rating.message}</p>
+            <p className="text-red-400 text-sm mt-1">{errors.self_rating.message}</p>
           )}
         </section>
 
         {/* ── Metadata ── */}
         <section>
-          <label className="block text-sm font-semibold text-ink mb-2">Details</label>
+          <label className="block text-sm font-semibold text-text mb-2">Details</label>
           <div className="grid grid-cols-3 gap-3">
             <div>
-              <label className="block text-xs text-warm-brown mb-1">Cook Time (min)</label>
+              <label className="block text-xs text-text-muted mb-1">Cook Time (min)</label>
               <input
                 {...register('cook_time_minutes', { min: { value: 0, message: 'Must be ≥ 0' } })}
                 type="number"
                 min="0"
                 placeholder="45"
-                className="w-full border border-warm-tan rounded px-2 py-1.5 text-sm text-ink bg-white focus:outline-none focus:ring-1 focus:ring-burnt-orange"
+                className="w-full border border-border rounded px-2 py-1.5 text-sm text-text bg-surface-input focus:outline-none focus:ring-1 focus:ring-cta"
               />
             </div>
             <div>
-              <label className="block text-xs text-warm-brown mb-1">Servings</label>
+              <label className="block text-xs text-text-muted mb-1">Servings</label>
               <input
                 {...register('servings', { min: { value: 1, message: 'Must be ≥ 1' } })}
                 type="number"
                 min="1"
                 placeholder="4"
-                className="w-full border border-warm-tan rounded px-2 py-1.5 text-sm text-ink bg-white focus:outline-none focus:ring-1 focus:ring-burnt-orange"
+                className="w-full border border-border rounded px-2 py-1.5 text-sm text-text bg-surface-input focus:outline-none focus:ring-1 focus:ring-cta"
               />
             </div>
             <div>
-              <label className="block text-xs text-warm-brown mb-1">Difficulty</label>
+              <label className="block text-xs text-text-muted mb-1">Difficulty</label>
               <select
                 {...register('difficulty')}
-                className="w-full border border-warm-tan rounded px-2 py-1.5 text-sm text-ink bg-white focus:outline-none focus:ring-1 focus:ring-burnt-orange"
+                className="w-full border border-border rounded px-2 py-1.5 text-sm text-text bg-surface-input focus:outline-none focus:ring-1 focus:ring-cta"
               >
                 <option value="">—</option>
                 <option value="Easy">Easy</option>
@@ -715,14 +715,14 @@ export default function RecipeFormPage() {
 
         {/* ── Submit ── */}
         {submitError && (
-          <p className="text-red-500 text-sm bg-red-50 border border-red-200 rounded px-3 py-2">
+          <p className="text-red-400 text-sm bg-red-900/20 border border-red-800/50 rounded px-3 py-2">
             {submitError}
           </p>
         )}
         <button
           type="submit"
           disabled={submitLoading}
-          className="w-full py-3 bg-burnt-orange text-white font-semibold rounded-lg hover:bg-burnt-orange-dark disabled:opacity-50 transition-colors"
+          className="w-full py-3 bg-cta text-white font-semibold rounded-sm hover:bg-cta-dark disabled:opacity-50 transition-colors"
         >
           {submitLoading
             ? 'Saving…'

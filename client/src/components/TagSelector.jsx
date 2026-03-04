@@ -6,10 +6,10 @@ const TAGS = {
 export default function TagSelector({ selectedTags, onToggle }) {
   return (
     <section>
-      <label className="block text-sm font-semibold text-ink mb-2">Tags</label>
+      <label className="block text-sm font-semibold text-text mb-2">Tags</label>
       {Object.entries(TAGS).map(([category, names]) => (
         <div key={category} className="mb-3">
-          <p className="text-xs text-warm-brown capitalize mb-1.5">{category}</p>
+          <p className="text-xs text-text-muted capitalize mb-1.5">{category}</p>
           <div className="flex flex-wrap gap-2">
             {names.map(name => {
               const active = selectedTags?.includes(name);
@@ -20,8 +20,8 @@ export default function TagSelector({ selectedTags, onToggle }) {
                   onClick={() => onToggle(name)}
                   className={`px-3 py-1 rounded-full text-sm font-medium border transition-colors ${
                     active
-                      ? 'bg-burnt-orange text-white border-burnt-orange'
-                      : 'bg-white text-warm-brown border-warm-tan hover:border-burnt-orange'
+                      ? 'bg-accent text-white border-accent'
+                      : 'bg-surface-input text-text-muted border-border hover:border-cta'
                   }`}
                 >
                   {name}

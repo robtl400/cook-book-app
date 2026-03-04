@@ -7,7 +7,7 @@ export default function Spinner({ size = 'md' }) {
       : 'w-8 h-8 border-4';
   return (
     <div className="flex justify-center py-10">
-      <div className={`${sz} border-burnt-orange border-t-transparent rounded-full animate-spin`} />
+      <div className={`${sz} border-accent border-t-transparent rounded-full animate-spin`} />
     </div>
   );
 }

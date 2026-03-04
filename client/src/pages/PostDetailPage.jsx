@@ -9,11 +9,11 @@ import SaveToBoxModal from '../components/SaveToBoxModal';
 
 function DifficultyBadge({ difficulty }) {
   const colors = {
-    easy: 'bg-green-100 text-green-700',
-    medium: 'bg-yellow-100 text-yellow-700',
-    hard: 'bg-red-100 text-red-700',
+    easy: 'bg-green-900/40 text-green-300',
+    medium: 'bg-yellow-900/40 text-yellow-300',
+    hard: 'bg-red-900/40 text-red-300',
   };
-  const cls = colors[difficulty?.toLowerCase()] ?? 'bg-cream-dark text-warm-brown';
+  const cls = colors[difficulty?.toLowerCase()] ?? 'bg-surface-input text-text-muted';
   return (
     <span className={`text-xs font-medium px-2.5 py-1 rounded-full capitalize ${cls}`}>
       {difficulty}
@@ -57,15 +57,15 @@ export default function PostDetailPage() {
 
   if (loading) return (
     <div className="flex justify-center py-20">
-      <div className="w-10 h-10 border-4 border-burnt-orange border-t-transparent rounded-full animate-spin" />
+      <div className="w-10 h-10 border-4 border-accent border-t-transparent rounded-full animate-spin" />
     </div>
   );
 
   if (error || !post) {
     return (
       <div className="max-w-2xl mx-auto px-4 py-20 text-center">
-        <p className="text-warm-brown text-lg">{error || 'Post not found.'}</p>
-        <Link to="/" className="mt-4 inline-block text-burnt-orange hover:underline">
+        <p className="text-text-muted text-lg">{error || 'Post not found.'}</p>
+        <Link to="/" className="mt-4 inline-block text-accent hover:underline">
           Go home
         </Link>
       </div>
@@ -84,7 +84,7 @@ export default function PostDetailPage() {
       <div className="max-w-2xl mx-auto px-4 py-8">
         {/* Hero image */}
         {imageSrc ? (
-          <div className="rounded-xl overflow-hidden mb-6 h-64 sm:h-80 bg-warm-tan">
+          <div className="rounded overflow-hidden mb-6 h-64 sm:h-80 bg-surface-input">
             <img
               src={imageSrc}
               alt={post.title}
@@ -93,30 +93,30 @@ export default function PostDetailPage() {
             />
           </div>
         ) : (
-          <div className="rounded-xl mb-6 h-48 bg-warm-tan flex items-center justify-center">
+          <div className="rounded mb-6 h-48 bg-surface-input flex items-center justify-center">
             <span className="text-6xl opacity-30">🍽</span>
           </div>
         )}
 
         {/* Title */}
-        <h1 className="text-3xl font-bold text-ink mb-3">{post.title}</h1>
+        <h1 className="text-3xl font-bold text-text mb-3">{post.title}</h1>
 
         {/* Meta row */}
         <div className="flex flex-wrap items-center gap-3 mb-4">
           <StarRating value={post.self_rating} />
           {post.cook_time_minutes && (
-            <span className="text-sm text-warm-brown">⏱ {post.cook_time_minutes} min</span>
+            <span className="text-sm text-text-muted">⏱ {post.cook_time_minutes} min</span>
           )}
           {post.servings && (
-            <span className="text-sm text-warm-brown">🍴 {post.servings} servings</span>
+            <span className="text-sm text-text-muted">🍴 {post.servings} servings</span>
           )}
           {post.difficulty && <DifficultyBadge difficulty={post.difficulty} />}
           {post.user && (
             <Link
               to={`/users/${post.user_id}`}
-              className="ml-auto flex items-center gap-1.5 text-sm text-warm-brown hover:text-burnt-orange transition-colors"
+              className="ml-auto flex items-center gap-1.5 text-sm text-text-muted hover:text-accent transition-colors"
             >
-              <div className="w-6 h-6 rounded-full bg-burnt-orange/20 flex items-center justify-center shrink-0 text-xs text-burnt-orange font-semibold">
+              <div className="w-6 h-6 rounded-full bg-cta/20 flex items-center justify-center shrink-0 text-xs text-accent font-semibold">
                 {post.user.profile_image_url ? (
                   <img
                     src={post.user.profile_image_url}
@@ -149,7 +149,7 @@ export default function PostDetailPage() {
             {post.tags.map((tag) => (
               <span
                 key={tag.id}
-                className="text-xs px-3 py-1 bg-cream-dark text-warm-brown rounded-full capitalize"
+                className="text-xs px-3 py-1 bg-surface-input text-text-muted rounded-full capitalize"
               >
                 {tag.name}
               </span>
@@ -159,20 +159,20 @@ export default function PostDetailPage() {
 
         {/* Description */}
         {post.description && (
-          <p className="mt-5 text-ink leading-relaxed">{post.description}</p>
+          <p className="mt-5 text-text leading-relaxed">{post.description}</p>
         )}
 
         {/* Ingredients */}
         {ingredients.length > 0 && (
           <section className="mt-8">
-            <h2 className="text-xl font-semibold text-ink mb-3">Ingredients</h2>
+            <h2 className="text-xl font-semibold text-text mb-3">Ingredients</h2>
             <ul className="space-y-2">
               {ingredients.map((ing) => (
-                <li key={ing.id} className="flex items-baseline gap-2 text-sm text-ink">
-                  <span className="w-1.5 h-1.5 rounded-full bg-burnt-orange mt-1 shrink-0" />
+                <li key={ing.id} className="flex items-baseline gap-2 text-sm text-text">
+                  <span className="w-1.5 h-1.5 rounded-full bg-accent mt-1 shrink-0" />
                   <span>
                     {ing.quantity != null && <strong>{ing.quantity} </strong>}
-                    {ing.unit && <span className="text-warm-brown">{ing.unit} </span>}
+                    {ing.unit && <span className="text-text-muted">{ing.unit} </span>}
                     {ing.name}
                   </span>
                 </li>
@@ -184,14 +184,14 @@ export default function PostDetailPage() {
         {/* Steps */}
         {steps.length > 0 && (
           <section className="mt-8">
-            <h2 className="text-xl font-semibold text-ink mb-3">Instructions</h2>
+            <h2 className="text-xl font-semibold text-text mb-3">Instructions</h2>
             <ol className="space-y-4">
               {steps.map((step, idx) => (
                 <li key={step.id} className="flex gap-4">
-                  <span className="flex-none w-7 h-7 rounded-full bg-burnt-orange text-white text-sm font-semibold flex items-center justify-center mt-0.5">
+                  <span className="flex-none w-7 h-7 rounded-full bg-accent text-white text-sm font-semibold flex items-center justify-center mt-0.5">
                     {idx + 1}
                   </span>
-                  <p className="text-sm text-ink leading-relaxed pt-1">{step.body}</p>
+                  <p className="text-sm text-text leading-relaxed pt-1">{step.body}</p>
                 </li>
               ))}
             </ol>
@@ -199,17 +199,17 @@ export default function PostDetailPage() {
         )}
 
         {/* Action buttons */}
-        <div className="flex flex-wrap gap-3 mt-10 pt-6 border-t border-warm-tan">
+        <div className="flex flex-wrap gap-3 mt-10 pt-6 border-t border-border">
           <button
             onClick={() => navigate(`/posts/${id}/cook`)}
-            className="px-5 py-2.5 bg-burnt-orange text-white font-semibold rounded-lg hover:bg-burnt-orange-dark transition-colors text-sm"
+            className="px-5 py-2.5 bg-cta text-white font-semibold rounded-sm hover:bg-cta-dark transition-colors text-sm"
           >
             I Cooked This
           </button>
           {user && (
             <button
               onClick={() => setShowSaveModal(true)}
-              className="px-5 py-2.5 border border-warm-tan text-ink font-semibold rounded-lg hover:border-burnt-orange hover:text-burnt-orange transition-colors text-sm"
+              className="px-5 py-2.5 border border-border text-text font-semibold rounded-sm hover:border-cta hover:text-accent transition-colors text-sm"
             >
               Save to Box
             </button>
@@ -218,23 +218,23 @@ export default function PostDetailPage() {
             <>
               <button
                 onClick={() => navigate(`/posts/${id}/edit`)}
-                className="px-5 py-2.5 border border-warm-tan text-ink font-semibold rounded-lg hover:border-burnt-orange hover:text-burnt-orange transition-colors text-sm"
+                className="px-5 py-2.5 border border-border text-text font-semibold rounded-sm hover:border-cta hover:text-accent transition-colors text-sm"
               >
                 Edit
               </button>
               {showDeleteConfirm ? (
                 <div className="flex items-center gap-2">
-                  <span className="text-sm text-warm-brown">Delete this recipe?</span>
+                  <span className="text-sm text-text-muted">Delete this recipe?</span>
                   <button
                     onClick={handleDelete}
                     disabled={deleting}
-                    className="px-3 py-1.5 bg-red-600 text-white text-sm rounded-md hover:bg-red-700 disabled:opacity-60 transition-colors"
+                    className="px-3 py-1.5 bg-red-600 text-white text-sm rounded-sm hover:bg-red-700 disabled:opacity-60 transition-colors"
                   >
                     {deleting ? 'Deleting…' : 'Yes, delete'}
                   </button>
                   <button
                     onClick={() => setShowDeleteConfirm(false)}
-                    className="px-3 py-1.5 text-sm text-warm-brown hover:text-ink transition-colors"
+                    className="px-3 py-1.5 text-sm text-text-muted hover:text-text transition-colors"
                   >
                     Cancel
                   </button>
@@ -242,7 +242,7 @@ export default function PostDetailPage() {
               ) : (
                 <button
                   onClick={() => setShowDeleteConfirm(true)}
-                  className="px-5 py-2.5 border border-red-200 text-red-600 font-semibold rounded-lg hover:bg-red-50 transition-colors text-sm"
+                  className="px-5 py-2.5 border border-red-800/50 text-red-400 font-semibold rounded-sm hover:bg-red-900/20 transition-colors text-sm"
                 >
                   Delete
                 </button>

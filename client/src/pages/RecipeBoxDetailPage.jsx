@@ -90,7 +90,7 @@ export default function RecipeBoxDetailPage() {
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-[60vh]">
-        <div className="w-8 h-8 border-4 border-burnt-orange border-t-transparent rounded-full animate-spin" />
+        <div className="w-8 h-8 border-4 border-accent border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
@@ -98,7 +98,7 @@ export default function RecipeBoxDetailPage() {
   if (error || !box) {
     return (
       <div className="max-w-2xl mx-auto px-4 py-10 text-center">
-        <p className="text-red-500">{error || 'Box not found.'}</p>
+        <p className="text-red-400">{error || 'Box not found.'}</p>
       </div>
     );
   }
@@ -115,27 +115,27 @@ export default function RecipeBoxDetailPage() {
             <input
               value={editName}
               onChange={e => setEditName(e.target.value)}
-              className="w-full border border-warm-tan rounded-lg px-3 py-2 text-ink text-xl font-bold bg-white focus:outline-none focus:ring-2 focus:ring-burnt-orange"
+              className="w-full border border-border rounded px-3 py-2 text-text text-xl font-bold bg-surface-input focus:outline-none focus:ring-2 focus:ring-cta"
             />
             <textarea
               value={editDesc}
               onChange={e => setEditDesc(e.target.value)}
               rows={2}
               placeholder="Description (optional)"
-              className="w-full border border-warm-tan rounded-lg px-3 py-2 text-ink bg-white resize-none focus:outline-none focus:ring-2 focus:ring-burnt-orange"
+              className="w-full border border-border rounded px-3 py-2 text-text bg-surface-input resize-none focus:outline-none focus:ring-2 focus:ring-cta"
             />
-            {editError && <p className="text-red-500 text-sm">{editError}</p>}
+            {editError && <p className="text-red-400 text-sm">{editError}</p>}
             <div className="flex gap-2">
               <button
                 onClick={saveEdit}
                 disabled={editLoading}
-                className="px-4 py-1.5 bg-burnt-orange text-white text-sm font-semibold rounded-lg hover:bg-burnt-orange-dark disabled:opacity-50 transition-colors"
+                className="px-4 py-1.5 bg-cta text-white text-sm font-semibold rounded-sm hover:bg-cta-dark disabled:opacity-50 transition-colors"
               >
                 {editLoading ? 'Saving…' : 'Save'}
               </button>
               <button
                 onClick={() => setEditing(false)}
-                className="px-4 py-1.5 border border-warm-tan text-warm-brown text-sm rounded-lg hover:border-ink transition-colors"
+                className="px-4 py-1.5 border border-border text-text-muted text-sm rounded-sm hover:border-text transition-colors"
               >
                 Cancel
               </button>
@@ -146,22 +146,22 @@ export default function RecipeBoxDetailPage() {
             <div className="flex items-start justify-between gap-4">
               <div>
                 <div className="flex items-center gap-2 flex-wrap">
-                  <h1 className="text-2xl font-bold text-ink">{box.name}</h1>
+                  <h1 className="text-2xl font-bold text-text">{box.name}</h1>
                   {box.is_default && (
-                    <span className="text-xs px-2 py-0.5 bg-cream-dark text-warm-brown rounded-full">
+                    <span className="text-xs px-2 py-0.5 bg-surface-input text-text-muted rounded-full">
                       Default
                     </span>
                   )}
                 </div>
                 {box.description && (
-                  <p className="text-warm-brown mt-1 text-sm">{box.description}</p>
+                  <p className="text-text-muted mt-1 text-sm">{box.description}</p>
                 )}
                 {box.user_id && (
-                  <p className="text-sm text-warm-brown mt-1">
+                  <p className="text-sm text-text-muted mt-1">
                     by{' '}
                     <Link
                       to={`/users/${box.user_id}`}
-                      className="font-medium hover:text-burnt-orange transition-colors"
+                      className="font-medium hover:text-accent transition-colors"
                     >
                       {box.user?.display_name || box.user?.username || `user #${box.user_id}`}
                     </Link>
@@ -173,30 +173,30 @@ export default function RecipeBoxDetailPage() {
                 <div className="flex gap-2 flex-shrink-0">
                   <button
                     onClick={startEdit}
-                    className="text-sm px-3 py-1.5 border border-warm-tan text-warm-brown rounded-lg hover:border-ink transition-colors"
+                    className="text-sm px-3 py-1.5 border border-border text-text-muted rounded-sm hover:border-text transition-colors"
                   >
                     Edit
                   </button>
                   {!confirmDelete ? (
                     <button
                       onClick={() => setConfirmDelete(true)}
-                      className="text-sm px-3 py-1.5 border border-red-200 text-red-500 rounded-lg hover:bg-red-50 transition-colors"
+                      className="text-sm px-3 py-1.5 border border-red-800/50 text-red-400 rounded-sm hover:bg-red-900/20 transition-colors"
                     >
                       Delete
                     </button>
                   ) : (
                     <div className="flex items-center gap-2">
-                      <span className="text-sm text-red-500">Delete this box?</span>
+                      <span className="text-sm text-red-400">Delete this box?</span>
                       <button
                         onClick={handleDelete}
                         disabled={deleteLoading}
-                        className="text-sm px-3 py-1 bg-red-500 text-white rounded-lg hover:bg-red-600 disabled:opacity-50 transition-colors"
+                        className="text-sm px-3 py-1 bg-red-600 text-white rounded-sm hover:bg-red-700 disabled:opacity-50 transition-colors"
                       >
                         {deleteLoading ? '…' : 'Yes'}
                       </button>
                       <button
                         onClick={() => setConfirmDelete(false)}
-                        className="text-sm px-3 py-1 border border-warm-tan text-warm-brown rounded-lg hover:border-ink transition-colors"
+                        className="text-sm px-3 py-1 border border-border text-text-muted rounded-sm hover:border-text transition-colors"
                       >
                         No
                       </button>
@@ -211,12 +211,12 @@ export default function RecipeBoxDetailPage() {
 
       {/* ── Post grid ── */}
       {posts.length === 0 ? (
-        <div className="text-center py-16 text-warm-brown">
+        <div className="text-center py-16 text-text-muted">
           <p>No recipes saved yet.</p>
           {isOwner && (
             <p className="text-sm mt-1">
               Browse the{' '}
-              <Link to="/explore" className="text-burnt-orange hover:underline">
+              <Link to="/explore" className="text-accent hover:underline">
                 Explore page
               </Link>{' '}
               to find recipes to save.

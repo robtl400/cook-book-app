@@ -59,30 +59,30 @@ function CommentItem({ comment, postOwnerId, onDelete, depth = 0 }) {
   }
 
   return (
-    <div className={depth > 0 ? 'ml-6 border-l-2 border-warm-tan/50 pl-4' : ''}>
+    <div className={depth > 0 ? 'ml-6 border-l-2 border-border/50 pl-4' : ''}>
       <div className="py-3">
         <div className="flex items-center gap-2 mb-1">
           <Link
             to={`/users/${comment.user_id}`}
-            className="text-sm font-medium text-ink hover:text-burnt-orange transition-colors"
+            className="text-sm font-medium text-text hover:text-accent transition-colors"
           >
             {comment.user?.display_name || comment.user?.username || `User ${comment.user_id}`}
           </Link>
-          <span className="text-xs text-warm-brown/60">{timeAgo(comment.created_at)}</span>
+          <span className="text-xs text-text-dim">{timeAgo(comment.created_at)}</span>
           {canDelete && (
             <button
               onClick={() => onDelete(comment.id)}
-              className="ml-auto text-xs text-warm-brown/50 hover:text-red-500 transition-colors"
+              className="ml-auto text-xs text-text-dim hover:text-red-400 transition-colors"
             >
               Delete
             </button>
           )}
         </div>
-        <p className="text-sm text-ink leading-relaxed">{comment.body}</p>
+        <p className="text-sm text-text leading-relaxed">{comment.body}</p>
         {depth === 0 && user && (
           <button
             onClick={() => setReplyOpen((prev) => !prev)}
-            className="mt-1 text-xs text-warm-brown/60 hover:text-burnt-orange transition-colors"
+            className="mt-1 text-xs text-text-dim hover:text-accent transition-colors"
           >
             {replyOpen ? 'Cancel' : 'Reply'}
           </button>
@@ -97,12 +97,12 @@ function CommentItem({ comment, postOwnerId, onDelete, depth = 0 }) {
             onChange={(e) => setReplyBody(e.target.value)}
             placeholder="Write a reply…"
             rows={2}
-            className="w-full px-3 py-2 text-sm border border-warm-tan rounded-md bg-white text-ink focus:outline-none focus:border-burnt-orange resize-none"
+            className="w-full px-3 py-2 text-sm border border-border rounded bg-surface-input text-text focus:outline-none focus:border-cta resize-none"
           />
           <button
             type="submit"
             disabled={submittingReply || !replyBody.trim()}
-            className="mt-1 px-4 py-1.5 text-xs bg-burnt-orange text-white rounded-md hover:bg-burnt-orange-dark disabled:opacity-60 transition-colors"
+            className="mt-1 px-4 py-1.5 text-xs bg-cta text-white rounded-sm hover:bg-cta-dark disabled:opacity-60 transition-colors"
           >
             {submittingReply ? 'Posting…' : 'Post reply'}
           </button>
@@ -174,8 +174,8 @@ export default function CommentSection({ postId, postOwnerId }) {
 
   return (
     <section className="mt-10">
-      <h2 className="text-lg font-semibold text-ink mb-4">
-        Comments {comments.length > 0 && <span className="text-warm-brown font-normal text-base">({comments.length})</span>}
+      <h2 className="text-lg font-semibold text-text mb-4">
+        Comments {comments.length > 0 && <span className="text-text-muted font-normal text-base">({comments.length})</span>}
       </h2>
 
       {/* New comment form */}
@@ -186,21 +186,21 @@ export default function CommentSection({ postId, postOwnerId }) {
             onChange={(e) => setNewBody(e.target.value)}
             placeholder="Add a comment…"
             rows={3}
-            className="w-full px-4 py-3 text-sm border border-warm-tan rounded-lg bg-white text-ink focus:outline-none focus:border-burnt-orange resize-none"
+            className="w-full px-4 py-3 text-sm border border-border rounded bg-surface-input text-text focus:outline-none focus:border-cta resize-none"
           />
           <div className="flex justify-end mt-2">
             <button
               type="submit"
               disabled={submitting || !newBody.trim()}
-              className="px-5 py-2 text-sm bg-burnt-orange text-white rounded-md hover:bg-burnt-orange-dark disabled:opacity-60 transition-colors font-medium"
+              className="px-5 py-2 text-sm bg-cta text-white rounded-sm hover:bg-cta-dark disabled:opacity-60 transition-colors font-medium"
             >
               {submitting ? 'Posting…' : 'Post comment'}
             </button>
           </div>
         </form>
       ) : (
-        <p className="text-sm text-warm-brown mb-6">
-          <Link to="/login" className="text-burnt-orange hover:underline font-medium">Log in</Link>{' '}
+        <p className="text-sm text-text-muted mb-6">
+          <Link to="/login" className="text-accent hover:underline font-medium">Log in</Link>{' '}
           to leave a comment.
         </p>
       )}
@@ -209,15 +209,15 @@ export default function CommentSection({ postId, postOwnerId }) {
       {loading ? (
         <Spinner size="sm" />
       ) : loadError ? (
-        <p className="text-sm text-warm-brown/70 text-center py-6">
+        <p className="text-sm text-text-dim text-center py-6">
           Couldn't load comments.
         </p>
       ) : comments.length === 0 ? (
-        <p className="text-sm text-warm-brown/70 text-center py-6">
+        <p className="text-sm text-text-dim text-center py-6">
           No comments yet. Be the first!
         </p>
       ) : (
-        <div className="divide-y divide-warm-tan/40">
+        <div className="divide-y divide-border/40">
           {comments.map((comment) => (
             <CommentItem
               key={comment.id}

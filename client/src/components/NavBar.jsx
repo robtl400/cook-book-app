@@ -20,12 +20,12 @@ export default function NavBar() {
   };
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-cream border-b border-warm-tan shadow-sm">
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-surface-nav border-b border-border">
       <div className="max-w-6xl mx-auto px-4 h-16 flex items-center gap-3">
         {/* Logo */}
         <Link
           to="/"
-          className="text-xl font-bold text-burnt-orange hover:text-burnt-orange-dark shrink-0"
+          className="text-xl font-bold text-accent hover:text-accent-dark shrink-0"
         >
           CookBook
         </Link>
@@ -33,7 +33,7 @@ export default function NavBar() {
         {/* Explore link — always visible */}
         <Link
           to="/explore"
-          className="hidden sm:block text-sm font-medium text-warm-brown hover:text-burnt-orange transition-colors shrink-0"
+          className="hidden sm:block text-sm font-medium text-text-muted hover:text-accent transition-colors shrink-0"
         >
           Explore
         </Link>
@@ -46,7 +46,7 @@ export default function NavBar() {
             onChange={(e) => setSearchQuery(e.target.value)}
             onKeyDown={handleSearchKeyDown}
             placeholder="Search recipes…"
-            className="w-full px-4 py-2 text-sm bg-cream-dark border border-warm-tan rounded-full text-ink placeholder-warm-brown/60 focus:outline-none focus:border-burnt-orange min-h-[44px]"
+            className="w-full px-4 py-2 text-sm bg-surface-input border border-border rounded-full text-text placeholder-text-dim focus:outline-none focus:border-cta min-h-[44px]"
           />
         </div>
 
@@ -56,7 +56,7 @@ export default function NavBar() {
             <>
               <Link
                 to="/posts/new"
-                className="flex items-center min-h-[44px] px-3 py-2 text-sm font-medium bg-burnt-orange text-white rounded-md hover:bg-burnt-orange-dark transition-colors"
+                className="flex items-center min-h-[44px] px-3 py-2 text-sm font-medium bg-cta text-white rounded-sm hover:bg-cta-dark transition-colors"
                 aria-label="New Recipe"
               >
                 <span className="sm:hidden">+</span>
@@ -64,13 +64,13 @@ export default function NavBar() {
               </Link>
               <Link
                 to={`/users/${user.id}`}
-                className="hidden sm:block text-sm font-medium text-ink hover:text-burnt-orange transition-colors max-w-[120px] truncate"
+                className="hidden sm:block text-sm font-medium text-text hover:text-accent transition-colors max-w-[120px] truncate"
               >
                 {user.display_name || user.username}
               </Link>
               <button
                 onClick={handleLogout}
-                className="text-sm text-warm-brown hover:text-ink transition-colors min-h-[44px] px-1"
+                className="text-sm text-text-muted hover:text-text transition-colors min-h-[44px] px-1"
               >
                 Log out
               </button>
@@ -79,13 +79,13 @@ export default function NavBar() {
             <>
               <Link
                 to="/login"
-                className="text-sm font-medium text-ink hover:text-burnt-orange transition-colors min-h-[44px] flex items-center"
+                className="text-sm font-medium text-text hover:text-accent transition-colors min-h-[44px] flex items-center"
               >
                 Log in
               </Link>
               <Link
                 to="/register"
-                className="flex items-center min-h-[44px] px-3 py-2 text-sm font-medium bg-burnt-orange text-white rounded-md hover:bg-burnt-orange-dark transition-colors"
+                className="flex items-center min-h-[44px] px-3 py-2 text-sm font-medium bg-cta text-white rounded-sm hover:bg-cta-dark transition-colors"
               >
                 Sign up
               </Link>

@@ -21,7 +21,7 @@ function Avatar({ user, size = 'lg' }) {
     );
   }
   return (
-    <div className={`${dim} rounded-full bg-warm-tan flex items-center justify-center font-bold text-warm-brown flex-shrink-0`}>
+    <div className={`${dim} rounded-full bg-surface-input flex items-center justify-center font-bold text-text-muted flex-shrink-0`}>
       {initial}
     </div>
   );
@@ -53,61 +53,61 @@ function EditProfileModal({ profile, onClose, onSave }) {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4"
       onClick={onClose}
     >
       <div
-        className="bg-white rounded-xl shadow-xl w-full max-w-md p-6"
+        className="bg-surface-raised rounded shadow-xl w-full max-w-md p-6 border border-border"
         onClick={e => e.stopPropagation()}
       >
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-bold text-ink">Edit Profile</h2>
-          <button onClick={onClose} className="text-warm-brown hover:text-ink text-xl leading-none">×</button>
+          <h2 className="text-lg font-bold text-text">Edit Profile</h2>
+          <button onClick={onClose} className="text-text-muted hover:text-text text-xl leading-none">×</button>
         </div>
 
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-ink mb-1">Display Name</label>
+            <label className="block text-sm font-medium text-text mb-1">Display Name</label>
             <input
               value={displayName}
               onChange={e => setDisplayName(e.target.value)}
-              className="w-full border border-warm-tan rounded px-3 py-2 text-sm text-ink focus:outline-none focus:ring-2 focus:ring-burnt-orange"
+              className="w-full border border-border rounded px-3 py-2 text-sm text-text bg-surface-input focus:outline-none focus:ring-2 focus:ring-cta"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-ink mb-1">Bio</label>
+            <label className="block text-sm font-medium text-text mb-1">Bio</label>
             <textarea
               value={bio}
               onChange={e => setBio(e.target.value)}
               rows={3}
               maxLength={300}
-              className="w-full border border-warm-tan rounded px-3 py-2 text-sm text-ink resize-none focus:outline-none focus:ring-2 focus:ring-burnt-orange"
+              className="w-full border border-border rounded px-3 py-2 text-sm text-text bg-surface-input resize-none focus:outline-none focus:ring-2 focus:ring-cta"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-ink mb-1">Profile Image URL</label>
+            <label className="block text-sm font-medium text-text mb-1">Profile Image URL</label>
             <input
               value={profileImageUrl}
               onChange={e => setProfileImageUrl(e.target.value)}
               placeholder="https://..."
-              className="w-full border border-warm-tan rounded px-3 py-2 text-sm text-ink focus:outline-none focus:ring-2 focus:ring-burnt-orange"
+              className="w-full border border-border rounded px-3 py-2 text-sm text-text bg-surface-input focus:outline-none focus:ring-2 focus:ring-cta"
             />
           </div>
         </div>
 
-        {error && <p className="text-red-500 text-sm mt-3">{error}</p>}
+        {error && <p className="text-red-400 text-sm mt-3">{error}</p>}
 
         <div className="flex gap-3 mt-5">
           <button
             onClick={onClose}
-            className="flex-1 py-2 border border-warm-tan text-warm-brown rounded-lg text-sm hover:border-ink transition-colors"
+            className="flex-1 py-2 border border-border text-text-muted rounded-sm text-sm hover:border-text transition-colors"
           >
             Cancel
           </button>
           <button
             onClick={handleSave}
             disabled={loading}
-            className="flex-1 py-2 bg-burnt-orange text-white rounded-lg text-sm font-semibold hover:bg-burnt-orange-dark disabled:opacity-50 transition-colors"
+            className="flex-1 py-2 bg-cta text-white rounded-sm text-sm font-semibold hover:bg-cta-dark disabled:opacity-50 transition-colors"
           >
             {loading ? 'Saving…' : 'Save'}
           </button>
@@ -216,7 +216,7 @@ export default function UserProfilePage() {
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-[60vh]">
-        <div className="w-8 h-8 border-4 border-burnt-orange border-t-transparent rounded-full animate-spin" />
+        <div className="w-8 h-8 border-4 border-accent border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
@@ -224,7 +224,7 @@ export default function UserProfilePage() {
   if (error || !profile) {
     return (
       <div className="max-w-2xl mx-auto px-4 py-10 text-center">
-        <p className="text-red-500">{error || 'Profile not found.'}</p>
+        <p className="text-red-400">{error || 'Profile not found.'}</p>
       </div>
     );
   }
@@ -237,13 +237,13 @@ export default function UserProfilePage() {
 
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-3 flex-wrap">
-            <h1 className="text-2xl font-bold text-ink">
+            <h1 className="text-2xl font-bold text-text">
               {profile.display_name || profile.username}
             </h1>
             {isOwn ? (
               <button
                 onClick={() => setShowEditModal(true)}
-                className="text-sm px-3 py-1 border border-warm-tan text-warm-brown rounded-lg hover:border-ink transition-colors"
+                className="text-sm px-3 py-1 border border-border text-text-muted rounded-sm hover:border-text transition-colors"
               >
                 Edit Profile
               </button>
@@ -251,10 +251,10 @@ export default function UserProfilePage() {
               <button
                 onClick={handleFollow}
                 disabled={followLoading}
-                className={`text-sm px-4 py-1 rounded-lg font-medium transition-colors ${
+                className={`text-sm px-4 py-1 rounded-sm font-medium transition-colors ${
                   isFollowing
-                    ? 'bg-cream-dark text-warm-brown border border-warm-tan hover:bg-warm-tan'
-                    : 'bg-burnt-orange text-white hover:bg-burnt-orange-dark'
+                    ? 'bg-surface-input text-text-muted border border-border hover:bg-border'
+                    : 'bg-cta text-white hover:bg-cta-dark'
                 } disabled:opacity-50`}
               >
                 {isFollowing ? 'Following' : 'Follow'}
@@ -262,32 +262,32 @@ export default function UserProfilePage() {
             )}
           </div>
 
-          <p className="text-sm text-warm-brown mt-0.5">@{profile.username}</p>
+          <p className="text-sm text-text-muted mt-0.5">@{profile.username}</p>
 
           {profile.bio && (
-            <p className="text-sm text-ink mt-2 leading-relaxed">{profile.bio}</p>
+            <p className="text-sm text-text mt-2 leading-relaxed">{profile.bio}</p>
           )}
 
-          {followError && <p className="text-red-500 text-xs mt-1">{followError}</p>}
+          {followError && <p className="text-red-400 text-xs mt-1">{followError}</p>}
 
-          <div className="flex gap-4 mt-3 text-sm text-warm-brown">
-            <span><strong className="text-ink">{profile.post_count ?? 0}</strong> Recipes</span>
-            <span><strong className="text-ink">{followerCount}</strong> Followers</span>
-            <span><strong className="text-ink">{profile.following_count ?? 0}</strong> Following</span>
+          <div className="flex gap-4 mt-3 text-sm text-text-muted">
+            <span><strong className="text-text">{profile.post_count ?? 0}</strong> Recipes</span>
+            <span><strong className="text-text">{followerCount}</strong> Followers</span>
+            <span><strong className="text-text">{profile.following_count ?? 0}</strong> Following</span>
           </div>
         </div>
       </div>
 
       {/* ── Tabs ── */}
-      <div className="flex border-b border-warm-tan mb-6">
+      <div className="flex border-b border-border mb-6">
         {['posts', 'boxes'].map(tab => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
             className={`px-5 py-2.5 text-sm font-medium capitalize transition-colors border-b-2 -mb-px ${
               activeTab === tab
-                ? 'border-burnt-orange text-burnt-orange'
-                : 'border-transparent text-warm-brown hover:text-ink'
+                ? 'border-accent text-accent'
+                : 'border-transparent text-text-muted hover:text-text'
             }`}
           >
             {tab === 'posts' ? 'Recipes' : 'Recipe Boxes'}
@@ -299,10 +299,10 @@ export default function UserProfilePage() {
       {activeTab === 'posts' && (
         postsLoading ? (
           <div className="flex justify-center py-12">
-            <div className="w-6 h-6 border-4 border-burnt-orange border-t-transparent rounded-full animate-spin" />
+            <div className="w-6 h-6 border-4 border-accent border-t-transparent rounded-full animate-spin" />
           </div>
         ) : posts.length === 0 ? (
-          <p className="text-warm-brown text-center py-12">No recipes yet.</p>
+          <p className="text-text-muted text-center py-12">No recipes yet.</p>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {posts.map(post => (
@@ -316,28 +316,28 @@ export default function UserProfilePage() {
       {activeTab === 'boxes' && (
         boxesLoading ? (
           <div className="flex justify-center py-12">
-            <div className="w-6 h-6 border-4 border-burnt-orange border-t-transparent rounded-full animate-spin" />
+            <div className="w-6 h-6 border-4 border-accent border-t-transparent rounded-full animate-spin" />
           </div>
         ) : boxes.length === 0 ? (
-          <p className="text-warm-brown text-center py-12">No recipe boxes yet.</p>
+          <p className="text-text-muted text-center py-12">No recipe boxes yet.</p>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {boxes.map(box => (
               <Link
                 key={box.id}
                 to={`/boxes/${box.id}`}
-                className="block bg-white border border-warm-tan rounded-xl p-4 hover:shadow-md hover:border-burnt-orange/30 transition-all"
+                className="block bg-surface-raised border border-border rounded p-4 hover:shadow-md hover:border-cta/30 transition-all"
               >
                 <div className="flex items-start justify-between gap-2">
-                  <h3 className="font-semibold text-ink text-base">{box.name}</h3>
+                  <h3 className="font-semibold text-text text-base">{box.name}</h3>
                   {box.is_default && (
-                    <span className="text-xs px-2 py-0.5 bg-cream-dark text-warm-brown rounded-full flex-shrink-0">
+                    <span className="text-xs px-2 py-0.5 bg-surface-input text-text-muted rounded-full flex-shrink-0">
                       Default
                     </span>
                   )}
                 </div>
                 {box.description && (
-                  <p className="text-sm text-warm-brown mt-1 line-clamp-2">{box.description}</p>
+                  <p className="text-sm text-text-muted mt-1 line-clamp-2">{box.description}</p>
                 )}
               </Link>
             ))}
