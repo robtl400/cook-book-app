@@ -7,7 +7,7 @@ import { useAuth } from '../context/AuthContext';
 
 function ImagePlaceholder() {
   return (
-    <div className="w-full h-full bg-warm-tan flex items-center justify-center">
+    <div className="w-full h-full bg-surface-input flex items-center justify-center">
       <span className="text-4xl opacity-40">🍽</span>
     </div>
   );
@@ -30,10 +30,10 @@ export default function PostCard({ post }) {
     <>
       <div
         onClick={handleCardClick}
-        className="bg-white border border-warm-tan rounded-xl overflow-hidden cursor-pointer hover:shadow-md hover:border-burnt-orange/30 transition-all"
+        className="bg-surface-raised border border-border rounded overflow-hidden cursor-pointer hover:shadow-md hover:border-cta/30 transition-all"
       >
         {/* Hero image */}
-        <div className="relative h-48 bg-warm-tan overflow-hidden">
+        <div className="relative h-48 bg-surface-input overflow-hidden">
           {imageSrc && !imgError ? (
             <img
               src={imageSrc}
@@ -48,17 +48,17 @@ export default function PostCard({ post }) {
 
         <div className="p-4">
           {/* Title + description */}
-          <h2 className="font-semibold text-ink text-base leading-snug line-clamp-2 mb-1">
+          <h2 className="font-semibold text-text text-base leading-snug line-clamp-2 mb-1">
             {post.title}
           </h2>
           {post.description && (
-            <p className="text-sm text-warm-brown line-clamp-2 mb-2">{post.description}</p>
+            <p className="text-sm text-text-muted line-clamp-2 mb-2">{post.description}</p>
           )}
 
           {/* Author row */}
           {author && (
             <div className="flex items-center gap-2 mb-2">
-              <div className="w-6 h-6 rounded-full bg-burnt-orange/20 flex items-center justify-center shrink-0">
+              <div className="w-6 h-6 rounded-full bg-cta/20 flex items-center justify-center shrink-0">
                 {author.profile_image_url ? (
                   <img
                     src={author.profile_image_url}
@@ -66,7 +66,7 @@ export default function PostCard({ post }) {
                     className="w-6 h-6 rounded-full object-cover"
                   />
                 ) : (
-                  <span className="text-xs text-burnt-orange font-semibold">
+                  <span className="text-xs text-accent font-semibold">
                     {(author.display_name || author.username || '?')[0].toUpperCase()}
                   </span>
                 )}
@@ -74,7 +74,7 @@ export default function PostCard({ post }) {
               <Link
                 to={`/users/${author.id}`}
                 onClick={(e) => e.stopPropagation()}
-                className="text-xs text-warm-brown hover:text-burnt-orange transition-colors font-medium"
+                className="text-xs text-text-muted hover:text-accent transition-colors font-medium"
               >
                 {author.display_name || author.username}
               </Link>
@@ -97,30 +97,30 @@ export default function PostCard({ post }) {
           {/* Metadata chips */}
           <div className="flex flex-wrap gap-1.5 mt-2">
             {post.cook_time_minutes && (
-              <span className="text-xs px-2 py-0.5 bg-cream-dark text-warm-brown rounded-full">
+              <span className="text-xs px-2 py-0.5 bg-surface-input text-text-muted rounded-full">
                 ⏱ {post.cook_time_minutes}m
               </span>
             )}
             {post.difficulty && (
-              <span className="text-xs px-2 py-0.5 bg-cream-dark text-warm-brown rounded-full capitalize">
+              <span className="text-xs px-2 py-0.5 bg-surface-input text-text-muted rounded-full capitalize">
                 {post.difficulty}
               </span>
             )}
             {post.servings && (
-              <span className="text-xs px-2 py-0.5 bg-cream-dark text-warm-brown rounded-full">
+              <span className="text-xs px-2 py-0.5 bg-surface-input text-text-muted rounded-full">
                 {post.servings} servings
               </span>
             )}
           </div>
 
           {/* Action row */}
-          <div className="flex items-center gap-2 mt-3 pt-3 border-t border-warm-tan/60">
+          <div className="flex items-center gap-2 mt-3 pt-3 border-t border-border/60">
             <button
               onClick={(e) => {
                 e.stopPropagation();
                 navigate(`/posts/${post.id}/cook`);
               }}
-              className="flex-1 text-xs font-medium py-1.5 px-3 bg-burnt-orange text-white rounded-md hover:bg-burnt-orange-dark transition-colors"
+              className="flex-1 text-xs font-medium py-1.5 px-3 bg-cta text-white rounded-sm hover:bg-cta-dark transition-colors"
             >
               I Cooked This
             </button>
@@ -130,7 +130,7 @@ export default function PostCard({ post }) {
                   e.stopPropagation();
                   setShowSaveModal(true);
                 }}
-                className="text-xs font-medium py-1.5 px-3 border border-warm-tan text-warm-brown rounded-md hover:border-burnt-orange hover:text-burnt-orange transition-colors"
+                className="text-xs font-medium py-1.5 px-3 border border-border text-accent rounded-sm hover:border-accent transition-colors"
               >
                 Save
               </button>
@@ -138,7 +138,7 @@ export default function PostCard({ post }) {
             <Link
               to={`/posts/${post.id}`}
               onClick={(e) => e.stopPropagation()}
-              className="flex items-center gap-1 text-xs text-warm-brown/70 hover:text-burnt-orange transition-colors ml-auto"
+              className="flex items-center gap-1 text-xs text-text-dim hover:text-accent transition-colors ml-auto"
             >
               <span>💬</span>
               <span>Comments</span>

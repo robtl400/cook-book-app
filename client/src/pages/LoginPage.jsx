@@ -24,26 +24,26 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-[calc(100vh-4rem)] bg-cream px-4">
-      <div className="w-full max-w-sm">
-        <h1 className="text-2xl font-bold text-ink mb-6 text-center">Log in to CookBook</h1>
+    <div className="flex items-center justify-center min-h-[calc(100vh-4rem)] bg-surface px-4">
+      <div className="w-full max-w-sm bg-surface-auth rounded p-8 shadow-xl">
+        <h1 className="text-2xl font-bold text-gray-800 mb-6 text-center">Log in to CookBook</h1>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           {errors.root && (
-            <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-md px-3 py-2">
+            <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded px-3 py-2">
               {errors.root.message}
             </p>
           )}
 
           <div>
-            <label className="block text-sm font-medium text-ink mb-1" htmlFor="email">
+            <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="email">
               Email
             </label>
             <input
               id="email"
               type="email"
               autoComplete="email"
-              className="w-full px-3 py-2 border border-warm-tan rounded-md bg-white text-ink focus:outline-none focus:border-burnt-orange"
+              className="w-full px-3 py-2 border border-gray-300 rounded bg-white text-gray-800 focus:outline-none focus:border-cta"
               {...register('email', { required: 'Email is required.' })}
             />
             {errors.email && (
@@ -52,14 +52,14 @@ export default function LoginPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-ink mb-1" htmlFor="password">
+            <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="password">
               Password
             </label>
             <input
               id="password"
               type="password"
               autoComplete="current-password"
-              className="w-full px-3 py-2 border border-warm-tan rounded-md bg-white text-ink focus:outline-none focus:border-burnt-orange"
+              className="w-full px-3 py-2 border border-gray-300 rounded bg-white text-gray-800 focus:outline-none focus:border-cta"
               {...register('password', { required: 'Password is required.' })}
             />
             {errors.password && (
@@ -70,15 +70,15 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="w-full py-2 bg-burnt-orange text-white font-semibold rounded-md hover:bg-burnt-orange-dark disabled:opacity-60 transition-colors"
+            className="w-full py-2 bg-cta text-white font-semibold rounded-sm hover:bg-cta-dark disabled:opacity-60 transition-colors"
           >
             {isSubmitting ? 'Logging in…' : 'Log in'}
           </button>
         </form>
 
-        <p className="mt-6 text-sm text-center text-warm-brown">
+        <p className="mt-6 text-sm text-center text-gray-600">
           Don&apos;t have an account?{' '}
-          <Link to="/register" className="text-burnt-orange hover:underline font-medium">
+          <Link to="/register" className="text-cta hover:underline font-medium">
             Sign up
           </Link>
         </p>

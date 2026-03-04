@@ -19,7 +19,7 @@ export default function StarRating({ value = 0, onChange, size = 'md' }) {
         {[1, 2, 3, 4, 5].map((star) => (
           <span
             key={star}
-            className={star <= value ? 'text-burnt-orange' : 'text-warm-tan'}
+            className={star <= value ? 'text-accent' : 'text-border'}
           >
             {star <= value ? '★' : '☆'}
           </span>
@@ -39,7 +39,7 @@ export default function StarRating({ value = 0, onChange, size = 'md' }) {
           key={star}
           type="button"
           className={`transition-colors ${
-            star <= display ? 'text-burnt-orange' : 'text-warm-tan hover:text-burnt-orange'
+            star <= display ? 'text-accent' : 'text-border hover:text-accent'
           }`}
           onMouseEnter={() => setHovered(star)}
           onClick={() => onChange(star)}
