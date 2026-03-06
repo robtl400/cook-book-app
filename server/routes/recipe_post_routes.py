@@ -72,6 +72,7 @@ def create_recipe():
 
     # With joined-table inheritance, creating RecipePost directly inserts into
     # both `posts` and `recipe_posts` tables — do NOT create a Post separately.
+    difficulty_raw = data.get("difficulty")
     recipe_post = RecipePost(
         user_id=current_user.id,
         post_type="recipe_post",
@@ -80,7 +81,7 @@ def create_recipe():
         title=data["title"],
         cook_time_minutes=data.get("cook_time_minutes"),
         servings=data.get("servings"),
-        difficulty=data.get("difficulty"),
+        difficulty=difficulty_raw.lower() if difficulty_raw else None,
         self_rating=int(data["self_rating"]),
         source_type=source_type,
         source_url=data.get("source_url"),
@@ -216,7 +217,10 @@ def update_post(post_id):
     )
     for field in recipe_fields:
         if field in data:
-            setattr(recipe_post, field, data[field])
+            val = data[field]
+            if field == "difficulty":
+                val = val.lower() if val else None
+            setattr(recipe_post, field, val)
 
     # Replace ingredients if provided
     if "ingredients" in data:
