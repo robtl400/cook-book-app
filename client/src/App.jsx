@@ -13,6 +13,7 @@ import PostDetailPage from './pages/PostDetailPage';
 import RecipeFormPage from './pages/RecipeFormPage';
 import UserProfilePage from './pages/UserProfilePage';
 import RecipeBoxDetailPage from './pages/RecipeBoxDetailPage';
+import MyRecipeBoxPage from './pages/MyRecipeBoxPage';
 import SearchResultsPage from './pages/SearchResultsPage';
 import NotFoundPage from './pages/NotFoundPage';
 
@@ -63,6 +64,14 @@ export default function App() {
             />
             <Route path="/users/:id" element={<UserProfilePage />} />
             <Route path="/boxes/:id" element={<RecipeBoxDetailPage />} />
+            <Route
+              path="/recipe-box"
+              element={
+                <ProtectedRoute>
+                  <MyRecipeBoxPage />
+                </ProtectedRoute>
+              }
+            />
             <Route path="/search" element={<SearchResultsPage />} />
             <Route path="*" element={<NotFoundPage />} />
           </Routes>
