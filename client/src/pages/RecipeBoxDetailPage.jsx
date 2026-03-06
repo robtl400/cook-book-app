@@ -22,9 +22,13 @@ export default function RecipeBoxDetailPage() {
   const [editLoading, setEditLoading] = useState(false);
   const [editError, setEditError] = useState('');
 
-  // Delete state
+  // Delete box state
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [deleteLoading, setDeleteLoading] = useState(false);
+
+  // Remove-post state
+  const [removeTarget, setRemoveTarget] = useState(null); // post_id pending removal
+  const [removeLoading, setRemoveLoading] = useState(false);
 
   useEffect(() => {
     async function load() {
@@ -84,6 +88,41 @@ export default function RecipeBoxDetailPage() {
       setError(err.message ?? 'Could not delete this box.');
       setDeleteLoading(false);
       setConfirmDelete(false);
+    }
+  }
+
+  function handleRemoveClick(postId) {
+    if (box?.box_type === 'liked') {
+      // Recipe Box — cascade removal, show warning first
+      setRemoveTarget(postId);
+    } else {
+      // Sub-box — remove directly
+      removePost(postId);
+    }
+  }
+
+  async function removePost(postId) {
+    try {
+      await api.delete(`/posts/${postId}/save/${id}`);
+      setPosts((prev) => prev.filter((p) => p.id !== postId));
+      toast.success('Removed from list.');
+    } catch (err) {
+      toast.error(err.message || 'Failed to remove recipe.');
+    }
+  }
+
+  async function confirmCascadeRemove() {
+    if (!removeTarget) return;
+    setRemoveLoading(true);
+    try {
+      await api.delete(`/posts/${removeTarget}/save/${id}`);
+      setPosts((prev) => prev.filter((p) => p.id !== removeTarget));
+      toast.success('Removed from Recipe Box and all lists.');
+    } catch (err) {
+      toast.error(err.message || 'Failed to remove recipe.');
+    } finally {
+      setRemoveLoading(false);
+      setRemoveTarget(null);
     }
   }
 
@@ -226,8 +265,53 @@ export default function RecipeBoxDetailPage() {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {posts.map(post => (
-            <PostCard key={post.id} post={post} />
+            <div key={post.id} className="relative group">
+              <PostCard post={post} />
+              {isOwner && (
+                <button
+                  onClick={() => handleRemoveClick(post.id)}
+                  className="absolute top-2 right-2 w-7 h-7 bg-surface-raised/90 border border-border rounded-full text-text-muted hover:text-red-400 hover:border-red-400/60 flex items-center justify-center text-base leading-none transition-colors opacity-0 group-hover:opacity-100"
+                  title={box.box_type === 'liked' ? 'Remove from Recipe Box' : `Remove from ${box.name}`}
+                >
+                  ×
+                </button>
+              )}
+            </div>
           ))}
+        </div>
+      )}
+
+      {/* ── Cascade remove confirmation ── */}
+      {removeTarget && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4"
+          onClick={() => !removeLoading && setRemoveTarget(null)}
+        >
+          <div
+            className="bg-surface-raised rounded shadow-xl w-full max-w-sm border border-border p-6"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3 className="font-semibold text-text mb-2">Remove from Recipe Box?</h3>
+            <p className="text-sm text-text-muted mb-5">
+              This will also remove the recipe from all your other lists (Cooked, Want to Try, etc.).
+            </p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setRemoveTarget(null)}
+                disabled={removeLoading}
+                className="flex-1 py-2 border border-border text-text-muted rounded-sm text-sm hover:border-text transition-colors disabled:opacity-50"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmCascadeRemove}
+                disabled={removeLoading}
+                className="flex-1 py-2 bg-red-600 text-white rounded-sm text-sm font-semibold hover:bg-red-700 disabled:opacity-50 transition-colors"
+              >
+                {removeLoading ? 'Removing…' : 'Remove'}
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

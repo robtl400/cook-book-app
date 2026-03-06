@@ -50,7 +50,7 @@ def clear_data():
 
 def make_default_boxes(user):
     boxes = [
-        RecipeBox(user_id=user.id, name="Liked",        box_type="liked",        is_default=True),
+        RecipeBox(user_id=user.id, name="Recipe Box",   box_type="liked",        is_default=True),
         RecipeBox(user_id=user.id, name="Cooked",       box_type="cooked",       is_default=True),
         RecipeBox(user_id=user.id, name="Want to Try",  box_type="want_to_try",  is_default=True),
     ]
@@ -189,6 +189,9 @@ def seed_social(users_map, posts_map):
         box_lookup[(box.user_id, box.box_type)] = box   # default boxes by type
         box_lookup[(box.user_id, box.name.lower())] = box  # custom boxes by name
 
+    # Track which posts are already added to each user's Recipe Box to avoid duplicates
+    recipe_box_posts = {}  # {user_id: set(post_id)}
+
     for username, box_key, recipe_title in BOX_SAVES:
         user = users_map.get(username)
         post = posts_map.get(recipe_title)
@@ -200,6 +203,26 @@ def seed_social(users_map, posts_map):
             print(f"  WARNING: box '{box_key}' not found for user '{username}' — skipped")
             continue
         db.session.add(BoxPost(box_id=box.id, post_id=post.id))
+
+        # Track Recipe Box saves
+        if box.box_type == "liked":
+            recipe_box_posts.setdefault(user.id, set()).add(post.id)
+
+    # Backfill: ensure every sub-box save also exists in Recipe Box
+    for username, box_key, recipe_title in BOX_SAVES:
+        user = users_map.get(username)
+        post = posts_map.get(recipe_title)
+        if not user or not post:
+            continue
+        box = box_lookup.get((user.id, box_key)) or box_lookup.get((user.id, box_key.lower()))
+        if not box or box.box_type == "liked":
+            continue  # skip Recipe Box itself and unknown boxes
+        recipe_box = box_lookup.get((user.id, "liked"))
+        if not recipe_box:
+            continue
+        if post.id not in recipe_box_posts.get(user.id, set()):
+            db.session.add(BoxPost(box_id=recipe_box.id, post_id=post.id))
+            recipe_box_posts.setdefault(user.id, set()).add(post.id)
 
     # Comments
     for c in COMMENTS:
