@@ -43,14 +43,16 @@ export default function NavBar() {
               Feed
             </Link>
           )}
-          <Link
-            to="/explore"
-            className={`text-xs font-medium leading-tight transition-colors ${
-              location.pathname === '/explore' ? 'text-accent' : 'text-text-muted hover:text-accent'
-            }`}
-          >
-            Explore
-          </Link>
+          {user && (
+            <Link
+              to="/explore"
+              className={`text-xs font-medium leading-tight transition-colors ${
+                location.pathname === '/explore' ? 'text-accent' : 'text-text-muted hover:text-accent'
+              }`}
+            >
+              Explore
+            </Link>
+          )}
           {user && (
             <Link
               to="/recipe-box"
