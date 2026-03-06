@@ -41,7 +41,7 @@ def register():
 
     # Auto-create the three default recipe boxes on registration
     default_boxes = [
-        RecipeBox(user_id=user.id, name="Liked", box_type="liked", is_default=True),
+        RecipeBox(user_id=user.id, name="Recipe Box", box_type="liked", is_default=True),
         RecipeBox(user_id=user.id, name="Cooked", box_type="cooked", is_default=True),
         RecipeBox(user_id=user.id, name="Want to Try", box_type="want_to_try", is_default=True),
     ]

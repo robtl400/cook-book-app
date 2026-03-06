@@ -21,7 +21,7 @@ RECIPES = [
         "source_type": "external",
         "source_url": "https://www.seriouseats.com/ingredient-stovetop-mac-and-cheese-recipe",
         "source_credit": None,
-        "image_url": None,
+        "image_url": "https://res.cloudinary.com/dioqhure1/image/upload/f_auto,q_auto,w_600,h_400,c_fill/mac-and-cheese",
         "tags": ["american", "vegetarian"],
         "ingredients": [
             {"quantity": "6",  "unit": "oz",  "name": "elbow macaroni"},
@@ -48,7 +48,7 @@ RECIPES = [
         "source_type": "external",
         "source_url": "https://www.seriouseats.com/pressure-cooker-corn-risotto",
         "source_credit": None,
-        "image_url": None,
+        "image_url": "https://res.cloudinary.com/dioqhure1/image/upload/f_auto,q_auto,w_600,h_400,c_fill/corn-risotto",
         "tags": ["italian", "vegetarian"],
         "ingredients": [
             {"quantity": "6",    "unit": "ears",  "name": "fresh corn"},
@@ -87,7 +87,7 @@ RECIPES = [
         "source_type": "external",
         "source_url": "https://www.seriouseats.com/salmon-burgers-remoulade-fennel-slaw-recipe",
         "source_credit": None,
-        "image_url": None,
+        "image_url": "https://res.cloudinary.com/dioqhure1/image/upload/f_auto,q_auto,w_600,h_400,c_fill/salmon-burgers",
         "tags": ["american"],
         "ingredients": [
             # Salmon patties
@@ -133,7 +133,7 @@ RECIPES = [
         "source_type": "external",
         "source_url": "https://www.seriouseats.com/miso-glazed-salmon-in-the-toaster-oven-recipe",
         "source_credit": None,
-        "image_url": None,
+        "image_url": "https://res.cloudinary.com/dioqhure1/image/upload/f_auto,q_auto,w_600,h_400,c_fill/miso-salmon",
         "tags": ["japanese"],
         "ingredients": [
             {"quantity": "1/4", "unit": "cup",  "name": "red or white miso"},
@@ -165,7 +165,7 @@ RECIPES = [
         "source_type": "external",
         "source_url": "https://cooking.nytimes.com/recipes/5703-salmon-roasted-in-butter",
         "source_credit": None,
-        "image_url": None,
+        "image_url": "https://res.cloudinary.com/dioqhure1/image/upload/f_auto,q_auto,w_600,h_400,c_fill/butter-salmon",
         "tags": ["american"],
         "ingredients": [
             {"quantity": "4",     "unit": "tbsp", "name": "unsalted butter (1/2 stick)"},
@@ -196,7 +196,7 @@ RECIPES = [
         "source_type": "external",
         "source_url": "https://www.bonappetit.com/recipe/vietnamese-tomato-salad",
         "source_credit": None,
-        "image_url": None,
+        "image_url": "https://res.cloudinary.com/dioqhure1/image/upload/f_auto,q_auto,w_600,h_400,c_fill/tomato-salad",
         "tags": ["vietnamese"],
         "ingredients": [
             {"quantity": "1/4",  "unit": "cup",  "name": "fish sauce (preferably Red Boat or Three Crabs)"},
@@ -232,7 +232,7 @@ RECIPES = [
         "source_type": "external",
         "source_url": "https://www.bonappetit.com/story/saag-feta-indian-ish",
         "source_credit": None,
-        "image_url": None,
+        "image_url": "https://res.cloudinary.com/dioqhure1/image/upload/f_auto,q_auto,w_600,h_400,c_fill/spinach-feta",
         "tags": ["indian", "vegetarian", "gluten-free"],
         "ingredients": [
             {"quantity": "1/4",  "unit": "cup",  "name": "ghee or olive oil, plus 2 tbsp more (divided)"},
@@ -275,7 +275,7 @@ RECIPES = [
         "source_type": "external",
         "source_url": "https://food52.com/recipes/84961-pomegranate-chicken-wings-recipe",
         "source_credit": None,
-        "image_url": None,
+        "image_url": "https://res.cloudinary.com/dioqhure1/image/upload/f_auto,q_auto,w_600,h_400,c_fill/pomegranate-wings",
         "tags": ["american", "middle eastern"],
         "ingredients": [
             # Wings
@@ -316,7 +316,7 @@ RECIPES = [
         "source_type": "external",
         "source_url": "https://food52.com/recipes/86167-peach-upside-down-cake-recipe",
         "source_credit": None,
-        "image_url": None,
+        "image_url": "https://res.cloudinary.com/dioqhure1/image/upload/f_auto,q_auto,w_600,h_400,c_fill/peach-mochi",
         "tags": ["american", "gluten-free"],
         "ingredients": [
             {"quantity": "3",    "unit": "medium","name": "ripe peaches, quartered and pitted"},
@@ -353,7 +353,7 @@ RECIPES = [
         "source_type": "external",
         "source_url": "https://food52.com/recipes/86372-french-onion-souffle-recipe",
         "source_credit": None,
-        "image_url": None,
+        "image_url": "https://res.cloudinary.com/dioqhure1/image/upload/f_auto,q_auto,w_600,h_400,c_fill/french-onion",
         "tags": ["french"],
         "ingredients": [
             {"quantity": "2",    "unit": "tbsp",  "name": "unsalted butter, plus more for greasing"},

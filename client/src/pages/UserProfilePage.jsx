@@ -128,8 +128,9 @@ export default function UserProfilePage() {
   const [activeTab, setActiveTab] = useState('posts');
   const [posts, setPosts] = useState([]);
   const [postsLoading, setPostsLoading] = useState(false);
-  const [boxes, setBoxes] = useState([]);
-  const [boxesLoading, setBoxesLoading] = useState(false);
+
+  // For "View Recipe Box" link on other profiles
+  const [recipeBoxId, setRecipeBoxId] = useState(null);
 
   const [isFollowing, setIsFollowing] = useState(false);
   const [followerCount, setFollowerCount] = useState(0);
@@ -178,15 +179,17 @@ export default function UserProfilePage() {
       .finally(() => setPostsLoading(false));
   }, [activeTab, id]);
 
-  // Load boxes tab
+  // Load Recipe Box ID for other profiles (for the "View Recipe Box" link)
   useEffect(() => {
-    if (activeTab !== 'boxes') return;
-    setBoxesLoading(true);
+    if (isOwn) return;
     api.get(`/users/${id}/boxes`)
-      .then(res => setBoxes(res.data ?? res))
-      .catch(() => setBoxes([]))
-      .finally(() => setBoxesLoading(false));
-  }, [activeTab, id]);
+      .then(res => {
+        const allBoxes = res.data ?? res;
+        const recipeBox = allBoxes.find(b => b.box_type === 'liked');
+        if (recipeBox) setRecipeBoxId(recipeBox.id);
+      })
+      .catch(() => {});
+  }, [id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   async function handleFollow() {
     if (!currentUser) return;
@@ -275,24 +278,38 @@ export default function UserProfilePage() {
             <span><strong className="text-text">{followerCount}</strong> Followers</span>
             <span><strong className="text-text">{profile.following_count ?? 0}</strong> Following</span>
           </div>
+
+          {/* Recipe Box link */}
+          {isOwn ? (
+            <Link
+              to="/recipe-box"
+              className="inline-flex items-center gap-1 text-sm text-accent hover:underline mt-3"
+            >
+              My Recipe Box →
+            </Link>
+          ) : recipeBoxId ? (
+            <Link
+              to={`/boxes/${recipeBoxId}`}
+              className="inline-flex items-center gap-1 text-sm text-accent hover:underline mt-3"
+            >
+              View Recipe Box →
+            </Link>
+          ) : null}
         </div>
       </div>
 
       {/* ── Tabs ── */}
       <div className="flex border-b border-border mb-6">
-        {['posts', 'boxes'].map(tab => (
-          <button
-            key={tab}
-            onClick={() => setActiveTab(tab)}
-            className={`px-5 py-2.5 text-sm font-medium capitalize transition-colors border-b-2 -mb-px ${
-              activeTab === tab
-                ? 'border-accent text-accent'
-                : 'border-transparent text-text-muted hover:text-text'
-            }`}
-          >
-            {tab === 'posts' ? 'Recipes' : 'Recipe Boxes'}
-          </button>
-        ))}
+        <button
+          onClick={() => setActiveTab('posts')}
+          className={`px-5 py-2.5 text-sm font-medium capitalize transition-colors border-b-2 -mb-px ${
+            activeTab === 'posts'
+              ? 'border-accent text-accent'
+              : 'border-transparent text-text-muted hover:text-text'
+          }`}
+        >
+          Recipes
+        </button>
       </div>
 
       {/* ── Posts tab ── */}
@@ -307,39 +324,6 @@ export default function UserProfilePage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {posts.map(post => (
               <PostCard key={post.id} post={post} />
-            ))}
-          </div>
-        )
-      )}
-
-      {/* ── Boxes tab ── */}
-      {activeTab === 'boxes' && (
-        boxesLoading ? (
-          <div className="flex justify-center py-12">
-            <div className="w-6 h-6 border-4 border-accent border-t-transparent rounded-full animate-spin" />
-          </div>
-        ) : boxes.length === 0 ? (
-          <p className="text-text-muted text-center py-12">No recipe boxes yet.</p>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {boxes.map(box => (
-              <Link
-                key={box.id}
-                to={`/boxes/${box.id}`}
-                className="block bg-surface-raised border border-border rounded p-4 hover:shadow-md hover:border-cta/30 transition-all"
-              >
-                <div className="flex items-start justify-between gap-2">
-                  <h3 className="font-semibold text-text text-base">{box.name}</h3>
-                  {box.is_default && (
-                    <span className="text-xs px-2 py-0.5 bg-surface-input text-text-muted rounded-full flex-shrink-0">
-                      Default
-                    </span>
-                  )}
-                </div>
-                {box.description && (
-                  <p className="text-sm text-text-muted mt-1 line-clamp-2">{box.description}</p>
-                )}
-              </Link>
             ))}
           </div>
         )

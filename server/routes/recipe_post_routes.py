@@ -299,6 +299,15 @@ def save_post(post_id):
         return jsonify({"error": "Post already in this box", "message": "Failed"}), 409
 
     db.session.add(BoxPost(box_id=box_id, post_id=post_id))
+
+    # Auto-add to Recipe Box (liked) whenever saving to any other box
+    if box.box_type != "liked":
+        recipe_box = RecipeBox.query.filter_by(user_id=current_user.id, box_type="liked").first()
+        if recipe_box:
+            rb_existing = BoxPost.query.filter_by(box_id=recipe_box.id, post_id=post_id).first()
+            if not rb_existing:
+                db.session.add(BoxPost(box_id=recipe_box.id, post_id=post_id))
+
     db.session.commit()
     return jsonify({"data": {"box_id": box_id, "post_id": post_id}, "message": "Saved"}), 201
 
@@ -317,6 +326,17 @@ def unsave_post(post_id, box_id):
     entry = BoxPost.query.filter_by(box_id=box_id, post_id=post_id).first()
     if not entry:
         return jsonify({"error": "Post not in this box", "message": "Failed"}), 404
+
+    # Removing from Recipe Box cascades to all of the user's other boxes
+    if box.box_type == "liked":
+        other_boxes = RecipeBox.query.filter(
+            RecipeBox.user_id == current_user.id,
+            RecipeBox.box_type != "liked",
+        ).all()
+        for other_box in other_boxes:
+            other_entry = BoxPost.query.filter_by(box_id=other_box.id, post_id=post_id).first()
+            if other_entry:
+                db.session.delete(other_entry)
 
     db.session.delete(entry)
     db.session.commit()

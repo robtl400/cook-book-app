@@ -31,7 +31,7 @@ export default function NavBar() {
           CookBook
         </Link>
 
-        {/* Stacked Feed + Explore links */}
+        {/* Stacked nav links */}
         <div className="hidden sm:flex flex-col shrink-0">
           {user && (
             <Link
@@ -51,6 +51,16 @@ export default function NavBar() {
           >
             Explore
           </Link>
+          {user && (
+            <Link
+              to="/recipe-box"
+              className={`text-xs font-medium leading-tight transition-colors ${
+                location.pathname === '/recipe-box' ? 'text-accent' : 'text-text-muted hover:text-accent'
+              }`}
+            >
+              Recipe Box
+            </Link>
+          )}
         </div>
 
         {/* Search */}

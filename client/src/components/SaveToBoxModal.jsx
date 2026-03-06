@@ -70,7 +70,7 @@ export default function SaveToBoxModal({ postId, onClose }) {
       const newBox = data.data ?? data;
       setBoxes((prev) => [...prev, newBox]);
       setNewBoxName('');
-      // Auto-save this post to the new box
+      // Auto-save this post to the new box (backend will also auto-add to Recipe Box)
       await handleToggle(newBox.id);
     } catch {
       toast.error('Failed to create box.');
@@ -78,6 +78,15 @@ export default function SaveToBoxModal({ postId, onClose }) {
       setCreatingBox(false);
     }
   }
+
+  // Recipe Box (box_type="liked") always appears first
+  const sortedBoxes = [...boxes].sort((a, b) => {
+    if (a.box_type === 'liked') return -1;
+    if (b.box_type === 'liked') return 1;
+    if (a.is_default && !b.is_default) return -1;
+    if (!a.is_default && b.is_default) return 1;
+    return a.name.localeCompare(b.name);
+  });
 
   return (
     // Backdrop
@@ -92,7 +101,7 @@ export default function SaveToBoxModal({ postId, onClose }) {
       >
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-4 border-b border-border">
-          <h2 className="font-semibold text-text">Save to box</h2>
+          <h2 className="font-semibold text-text">Save to Recipe Box</h2>
           <button
             onClick={onClose}
             className="text-text-muted hover:text-text transition-colors text-lg leading-none"
@@ -108,26 +117,43 @@ export default function SaveToBoxModal({ postId, onClose }) {
             <div className="flex justify-center py-6">
               <div className="w-6 h-6 border-4 border-accent border-t-transparent rounded-full animate-spin" />
             </div>
-          ) : boxes.length === 0 ? (
+          ) : sortedBoxes.length === 0 ? (
             <p className="text-sm text-text-muted text-center py-4">No boxes yet.</p>
           ) : (
             <ul className="space-y-1">
-              {boxes.map((box) => {
-                const checked = savedBoxIds.has(box.id);
+              {sortedBoxes.map((box) => {
+                const isRecipeBox = box.box_type === 'liked';
+                const checked = isRecipeBox || savedBoxIds.has(box.id);
                 const busy = pending.has(box.id);
+                const disabled = isRecipeBox || busy;
                 return (
                   <li key={box.id}>
-                    <label className="flex items-center gap-3 py-2 cursor-pointer group">
+                    <label
+                      className={`flex items-center gap-3 py-2 group ${
+                        isRecipeBox
+                          ? 'cursor-default'
+                          : 'cursor-pointer'
+                      }`}
+                    >
                       <input
                         type="checkbox"
                         checked={checked}
-                        disabled={busy}
-                        onChange={() => handleToggle(box.id)}
-                        className="w-4 h-4 accent-cta rounded cursor-pointer"
+                        disabled={disabled}
+                        onChange={() => !isRecipeBox && handleToggle(box.id)}
+                        className="w-4 h-4 accent-cta rounded cursor-pointer disabled:cursor-default"
                       />
-                      <span className="text-sm text-text group-hover:text-accent transition-colors flex-1">
+                      <span className={`text-sm flex-1 transition-colors ${
+                        isRecipeBox
+                          ? 'text-text font-medium'
+                          : 'text-text group-hover:text-accent'
+                      }`}>
                         {box.name}
                       </span>
+                      {isRecipeBox && (
+                        <span className="text-xs px-1.5 py-0.5 bg-cta/10 text-cta rounded-full shrink-0">
+                          Always saved
+                        </span>
+                      )}
                       {busy && (
                         <span className="w-4 h-4 border-2 border-accent border-t-transparent rounded-full animate-spin" />
                       )}
@@ -146,7 +172,7 @@ export default function SaveToBoxModal({ postId, onClose }) {
               type="text"
               value={newBoxName}
               onChange={(e) => setNewBoxName(e.target.value)}
-              placeholder="New box name…"
+              placeholder="New list name…"
               className="flex-1 px-3 py-1.5 text-sm border border-border rounded bg-surface-input text-text focus:outline-none focus:border-cta"
             />
             <button
