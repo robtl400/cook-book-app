@@ -13,3 +13,4 @@ class Config:
     # Prevent session cookie from being sent over plain HTTP in dev
     SESSION_COOKIE_HTTPONLY = True
     SESSION_COOKIE_SAMESITE = "Lax"
+    SESSION_COOKIE_SECURE = os.environ.get("FLASK_ENV") == "production"

@@ -1,3 +1,5 @@
+import os
+
 from flask import Flask
 from flask_cors import CORS
 from flask_login import LoginManager
@@ -18,8 +20,10 @@ def create_app():
     migrate.init_app(app, db)
     login_manager.init_app(app)
 
-    # Allow requests from the Vite dev server and Netlify frontend
-    CORS(app, supports_credentials=True, origins=["http://localhost:5173", "https://*.netlify.app"])
+    # Allow requests from the Vite dev server and the deployed Netlify frontend.
+    # Set FRONTEND_URL env var on Render to your Netlify URL (comma-separated for multiple).
+    frontend_origins = os.environ.get("FRONTEND_URL", "http://localhost:5173").split(",")
+    CORS(app, supports_credentials=True, origins=frontend_origins)
 
     # Tell Flask-Login to return 401 JSON instead of redirecting to a login page
     login_manager.unauthorized_handler(lambda: ({"error": "Authentication required", "message": "Failed"}, 401))
