@@ -19,7 +19,7 @@ RECIPES = [
         "source_type": "external",
         "source_url": "https://hostthetoast.com/sweet-potato-chorizo-chili-with-poblano-avocado-crema-and-goat-cheese/",
         "source_credit": None,
-        "image_url": None,
+        "image_url": "https://res.cloudinary.com/dioqhure1/image/upload/f_auto,q_auto,w_600,h_400,c_fill/chorizo-chili",
         "tags": ["american", "mexican"],
         "ingredients": [
             {"quantity": "2",    "unit": "large",       "name": "sweet potatoes"},
@@ -67,7 +67,7 @@ RECIPES = [
         "source_type": "original",
         "source_url": None,
         "source_credit": None,
-        "image_url": None,
+        "image_url": "https://res.cloudinary.com/dioqhure1/image/upload/f_auto,q_auto,w_600,h_400,c_fill/mai-tai",
         "tags": ["american"],
         "ingredients": [
             {"quantity": "1",   "unit": "oz",   "name": "dark rum"},
@@ -100,7 +100,7 @@ RECIPES = [
         "source_type": "original",
         "source_url": None,
         "source_credit": None,
-        "image_url": None,
+        "image_url": "https://res.cloudinary.com/dioqhure1/image/upload/f_auto,q_auto,w_600,h_400,c_fill/almond-cookies",
         "tags": ["american"],
         "ingredients": [
             {"quantity": "1/2",   "unit": "lb",    "name": "butter"},
@@ -137,7 +137,7 @@ RECIPES = [
         "source_type": "original",
         "source_url": None,
         "source_credit": None,
-        "image_url": None,
+        "image_url": "https://res.cloudinary.com/dioqhure1/image/upload/f_auto,q_auto,w_600,h_400,c_fill/smoothie",
         "tags": ["vegan", "gluten-free", "dairy-free"],
         "ingredients": [
             {"quantity": "1",   "unit": "handful", "name": "mango"},
@@ -164,7 +164,7 @@ RECIPES = [
         "source_type": "original",
         "source_url": None,
         "source_credit": None,
-        "image_url": None,
+        "image_url": "https://res.cloudinary.com/dioqhure1/image/upload/f_auto,q_auto,w_600,h_400,c_fill/everything-salad",
         "tags": ["vegetarian", "mediterranean"],
         "ingredients": [
             {"quantity": "",  "unit": "",   "name": "spinach"},
@@ -195,7 +195,7 @@ RECIPES = [
         "source_type": "external",
         "source_url": "https://www.seriouseats.com/recipes/2012/02/15-minute-creamy-tomato-soup-vegan-recipe.html",
         "source_credit": None,
-        "image_url": None,
+        "image_url": "https://res.cloudinary.com/dioqhure1/image/upload/f_auto,q_auto,w_600,h_400,c_fill/tomato-soup",
         "tags": ["vegan", "vegetarian", "dairy-free"],
         "ingredients": [
             {"quantity": "1/2", "unit": "cup",  "name": "extra-virgin olive oil, divided"},
@@ -230,7 +230,7 @@ RECIPES = [
         "source_type": "original",
         "source_url": None,
         "source_credit": None,
-        "image_url": None,
+        "image_url": "https://res.cloudinary.com/dioqhure1/image/upload/f_auto,q_auto,w_600,h_400,c_fill/sweet-potato-casserole",
         "tags": ["american"],
         "ingredients": [
             # Casserole
@@ -269,7 +269,7 @@ RECIPES = [
         "source_type": "original",
         "source_url": None,
         "source_credit": None,
-        "image_url": None,
+        "image_url": "https://res.cloudinary.com/dioqhure1/image/upload/f_auto,q_auto,w_600,h_400,c_fill/classy-bitch",
         "tags": ["american"],
         "ingredients": [
             {"quantity": "1",  "unit": "shot", "name": "good gin"},
@@ -297,7 +297,7 @@ RECIPES = [
         "source_type": "original",
         "source_url": None,
         "source_credit": None,
-        "image_url": None,
+        "image_url": "https://res.cloudinary.com/dioqhure1/image/upload/f_auto,q_auto,w_600,h_400,c_fill/special-k-bars",
         "tags": ["american"],
         "ingredients": [
             {"quantity": "1",   "unit": "cup",  "name": "light corn syrup"},
@@ -331,7 +331,7 @@ RECIPES = [
         "source_type": "original",
         "source_url": None,
         "source_credit": None,
-        "image_url": None,
+        "image_url": "https://res.cloudinary.com/dioqhure1/image/upload/f_auto,q_auto,w_600,h_400,c_fill/guac",
         "tags": ["mexican", "vegan", "gluten-free", "dairy-free"],
         "ingredients": [
             {"quantity": "6",  "unit": "",      "name": "perfectly ripe avocados"},
@@ -363,7 +363,7 @@ RECIPES = [
         "source_type": "original",
         "source_url": None,
         "source_credit": None,
-        "image_url": None,
+        "image_url": "https://res.cloudinary.com/dioqhure1/image/upload/f_auto,q_auto,w_600,h_400,c_fill/cranberry-relish",
         "tags": ["american", "vegan", "gluten-free", "dairy-free"],
         "ingredients": [
             {"quantity": "1",  "unit": "bag",  "name": "fresh cranberries"},
@@ -390,7 +390,7 @@ RECIPES = [
         "source_type": "original",
         "source_url": None,
         "source_credit": None,
-        "image_url": None,
+        "image_url": "https://res.cloudinary.com/dioqhure1/image/upload/f_auto,q_auto,w_600,h_400,c_fill/peanut-noodles",
         "tags": ["american"],
         "ingredients": [
             {"quantity": "1",   "unit": "lb",   "name": "pasta (fettuccine, linguine, or soba recommended)"},
@@ -424,7 +424,7 @@ RECIPES = [
         "source_type": "original",
         "source_url": None,
         "source_credit": None,
-        "image_url": None,
+        "image_url": "https://res.cloudinary.com/dioqhure1/image/upload/f_auto,q_auto,w_600,h_400,c_fill/lasagna",
         "tags": ["italian", "american"],
         "ingredients": [
             # Big Sauce
@@ -471,7 +471,7 @@ RECIPES = [
         "source_type": "original",
         "source_url": None,
         "source_credit": None,
-        "image_url": None,
+        "image_url": "https://res.cloudinary.com/dioqhure1/image/upload/f_auto,q_auto,w_600,h_400,c_fill/butter-chicken",
         "tags": ["indian"],
         "ingredients": [
             # Tandoori Chicken Marinade
