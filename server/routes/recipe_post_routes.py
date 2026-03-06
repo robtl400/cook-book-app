@@ -66,6 +66,13 @@ def create_recipe():
     if not data.get("title") or data.get("self_rating") is None:
         return jsonify({"error": "title and self_rating are required", "message": "Failed"}), 400
 
+    try:
+        self_rating = int(data["self_rating"])
+    except (ValueError, TypeError):
+        return jsonify({"error": "self_rating must be an integer 1-5", "message": "Failed"}), 400
+    if not 1 <= self_rating <= 5:
+        return jsonify({"error": "self_rating must be between 1 and 5", "message": "Failed"}), 400
+
     source_type = data.get("source_type", "original")
     if source_type not in ("original", "external", "internal", "credit"):
         return jsonify({"error": "Invalid source_type", "message": "Failed"}), 400
@@ -82,7 +89,7 @@ def create_recipe():
         cook_time_minutes=data.get("cook_time_minutes"),
         servings=data.get("servings"),
         difficulty=difficulty_raw.lower() if difficulty_raw else None,
-        self_rating=int(data["self_rating"]),
+        self_rating=self_rating,
         source_type=source_type,
         source_url=data.get("source_url"),
         source_post_id=data.get("source_post_id"),
@@ -372,10 +379,16 @@ def add_comment(post_id):
     if not body:
         return jsonify({"error": "Comment body is required", "message": "Failed"}), 400
 
+    parent_id = data.get("parent_id")
+    if parent_id is not None:
+        parent = db.session.get(Comment, parent_id)
+        if not parent or parent.post_id != post_id:
+            return jsonify({"error": "Invalid parent comment", "message": "Failed"}), 400
+
     comment = Comment(
         user_id=current_user.id,
         post_id=post_id,
-        parent_id=data.get("parent_id"),
+        parent_id=parent_id,
         body=body,
     )
     db.session.add(comment)

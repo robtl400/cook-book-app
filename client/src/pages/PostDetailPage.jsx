@@ -198,20 +198,20 @@ export default function PostDetailPage() {
 
         {/* Action buttons */}
         <div className="flex flex-wrap gap-3 mt-10 pt-6 border-t border-border">
-          <button
-            onClick={() => navigate(`/posts/${id}/cook`)}
-            className="px-5 py-2.5 bg-cta text-white font-semibold rounded-sm hover:bg-cta-dark transition-colors text-sm"
-          >
-            I Cooked This
-          </button>
           {user && (
             <button
               onClick={() => setShowSaveModal(true)}
-              className="px-5 py-2.5 border border-border text-text font-semibold rounded-sm hover:border-cta hover:text-accent transition-colors text-sm"
+              className="px-5 py-2.5 bg-cta text-white font-semibold rounded-sm hover:bg-cta-dark transition-colors text-sm"
             >
               Save to Box
             </button>
           )}
+          <button
+            onClick={() => navigate(`/posts/${id}/cook`)}
+            className="px-5 py-2.5 border border-border text-accent font-semibold rounded-sm hover:border-accent transition-colors text-sm"
+          >
+            I Cooked This
+          </button>
           {isOwner && (
             <>
               <button
