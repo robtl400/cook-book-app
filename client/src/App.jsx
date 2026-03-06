@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from './context/AuthContext';
@@ -19,11 +18,6 @@ import SearchResultsPage from './pages/SearchResultsPage';
 import NotFoundPage from './pages/NotFoundPage';
 
 export default function App() {
-  useEffect(() => {
-    fetch((import.meta.env.VITE_API_URL || "") + "/api/auth/me", { credentials: "include" })
-      .catch(() => {});
-  }, []);
-
   return (
     <AuthProvider>
       <BrowserRouter>

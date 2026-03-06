@@ -293,7 +293,10 @@ export default function RecipeFormPage() {
 
   // ── Submit ───────────────────────────────────────────────────────────────
   async function onSubmit(data) {
-    if (!data.self_rating) return; // guard (handled by Controller rules too)
+    if (!data.self_rating) {
+      setSubmitError('Please rate this recipe before submitting.');
+      return;
+    }
     setSubmitLoading(true);
     setSubmitError('');
     try {

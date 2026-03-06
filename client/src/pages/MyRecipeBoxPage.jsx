@@ -14,6 +14,7 @@ export default function MyRecipeBoxPage() {
   const [loading, setLoading] = useState(true);
   const [postsLoading, setPostsLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [retryKey, setRetryKey] = useState(0);
 
   // Remove-from-box state
   const [removeTarget, setRemoveTarget] = useState(null); // post_id pending removal
@@ -47,7 +48,7 @@ export default function MyRecipeBoxPage() {
       })
       .catch((err) => setError(err.message || 'Failed to load recipes.'))
       .finally(() => setPostsLoading(false));
-  }, [selectedBoxId]);
+  }, [selectedBoxId, retryKey]);
 
   const recipeBox = boxes.find((b) => b.box_type === 'liked');
   const subBoxes = boxes
@@ -141,7 +142,7 @@ export default function MyRecipeBoxPage() {
         <div className="py-8 text-center">
           <p className="text-text-muted mb-3">{error}</p>
           <button
-            onClick={() => selectedBoxId && setSelectedBoxId(selectedBoxId)}
+            onClick={() => setRetryKey((k) => k + 1)}
             className="text-sm text-accent hover:underline"
           >
             Try again

@@ -6,11 +6,13 @@ import { useAuth } from '../context/AuthContext';
 export default function SaveToBoxModal({ postId, onClose }) {
   const { user } = useAuth();
   const [boxes, setBoxes] = useState([]);
-  const [savedBoxIds, setSavedBoxIds] = useState(new Set());
   const [loading, setLoading] = useState(true);
   const [newBoxName, setNewBoxName] = useState('');
   const [creatingBox, setCreatingBox] = useState(false);
-  const [pending, setPending] = useState(new Set()); // box IDs currently being toggled
+  const [submitting, setSubmitting] = useState(false);
+
+  // Local-only staged selections — nothing hits the API until Submit
+  const [stagedBoxIds, setStagedBoxIds] = useState(new Set());
 
   useEffect(() => {
     if (!user) return;
@@ -21,44 +23,33 @@ export default function SaveToBoxModal({ postId, onClose }) {
       .finally(() => setLoading(false));
   }, [user]);
 
-  async function handleToggle(boxId) {
-    if (pending.has(boxId)) return;
-    setPending((p) => new Set([...p, boxId]));
-
-    const box = boxes.find((b) => b.id === boxId);
-    const boxName = box?.name || 'box';
-
-    if (savedBoxIds.has(boxId)) {
-      // Unsave
-      try {
-        await api.delete(`/posts/${postId}/save/${boxId}`);
-        setSavedBoxIds((prev) => {
-          const next = new Set(prev);
-          next.delete(boxId);
-          return next;
-        });
-      } catch {
-        toast.error('Failed to remove from box.');
-      }
-    } else {
-      // Save
-      try {
-        await api.post(`/posts/${postId}/save`, { box_id: boxId });
-        setSavedBoxIds((prev) => new Set([...prev, boxId]));
-        toast.success(`Saved to "${boxName}"!`);
-      } catch (err) {
-        if (err.status === 409) {
-          // Already saved — reflect that in state
-          setSavedBoxIds((prev) => new Set([...prev, boxId]));
-        }
-      }
-    }
-
-    setPending((p) => {
-      const next = new Set(p);
-      next.delete(boxId);
+  function handleToggle(boxId) {
+    setStagedBoxIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(boxId)) next.delete(boxId);
+      else next.add(boxId);
       return next;
     });
+  }
+
+  async function handleSubmit() {
+    if (stagedBoxIds.size === 0) { onClose(); return; }
+    setSubmitting(true);
+    let saved = 0;
+    for (const boxId of stagedBoxIds) {
+      try {
+        await api.post(`/posts/${postId}/save`, { box_id: boxId });
+        saved++;
+      } catch (err) {
+        if (err.status === 409) {
+          saved++; // already saved — still a success
+        }
+        // other errors silently skipped; toast below handles partial failures
+      }
+    }
+    if (saved > 0) toast.success('Saved!');
+    setSubmitting(false);
+    onClose();
   }
 
   async function handleCreateBox(e) {
@@ -70,8 +61,8 @@ export default function SaveToBoxModal({ postId, onClose }) {
       const newBox = data.data ?? data;
       setBoxes((prev) => [...prev, newBox]);
       setNewBoxName('');
-      // Auto-save this post to the new box (backend will also auto-add to Recipe Box)
-      await handleToggle(newBox.id);
+      // Auto-stage the new box so it will be saved on Submit
+      setStagedBoxIds((prev) => new Set([...prev, newBox.id]));
     } catch {
       toast.error('Failed to create box.');
     } finally {
@@ -79,7 +70,6 @@ export default function SaveToBoxModal({ postId, onClose }) {
     }
   }
 
-  // Recipe Box (box_type="liked") always appears first
   const sortedBoxes = [...boxes].sort((a, b) => {
     if (a.box_type === 'liked') return -1;
     if (b.box_type === 'liked') return 1;
@@ -89,12 +79,10 @@ export default function SaveToBoxModal({ postId, onClose }) {
   });
 
   return (
-    // Backdrop
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4"
       onClick={onClose}
     >
-      {/* Modal card */}
       <div
         className="bg-surface-raised rounded shadow-xl w-full max-w-sm overflow-hidden border border-border"
         onClick={(e) => e.stopPropagation()}
@@ -123,39 +111,34 @@ export default function SaveToBoxModal({ postId, onClose }) {
             <ul className="space-y-1">
               {sortedBoxes.map((box) => {
                 const isRecipeBox = box.box_type === 'liked';
-                const checked = isRecipeBox || savedBoxIds.has(box.id);
-                const busy = pending.has(box.id);
-                const disabled = isRecipeBox || busy;
+                const checked = isRecipeBox || stagedBoxIds.has(box.id);
                 return (
                   <li key={box.id}>
                     <label
                       className={`flex items-center gap-3 py-2 group ${
-                        isRecipeBox
-                          ? 'cursor-default'
-                          : 'cursor-pointer'
+                        isRecipeBox ? 'cursor-default' : 'cursor-pointer'
                       }`}
                     >
                       <input
                         type="checkbox"
                         checked={checked}
-                        disabled={disabled}
+                        disabled={isRecipeBox || submitting}
                         onChange={() => !isRecipeBox && handleToggle(box.id)}
                         className="w-4 h-4 accent-cta rounded cursor-pointer disabled:cursor-default"
                       />
-                      <span className={`text-sm flex-1 transition-colors ${
-                        isRecipeBox
-                          ? 'text-text font-medium'
-                          : 'text-text group-hover:text-accent'
-                      }`}>
+                      <span
+                        className={`text-sm flex-1 transition-colors ${
+                          isRecipeBox
+                            ? 'text-text font-medium'
+                            : 'text-text group-hover:text-accent'
+                        }`}
+                      >
                         {box.name}
                       </span>
                       {isRecipeBox && (
                         <span className="text-xs px-1.5 py-0.5 bg-cta/10 text-cta rounded-full shrink-0">
                           Always saved
                         </span>
-                      )}
-                      {busy && (
-                        <span className="w-4 h-4 border-2 border-accent border-t-transparent rounded-full animate-spin" />
                       )}
                     </label>
                   </li>
@@ -183,6 +166,24 @@ export default function SaveToBoxModal({ postId, onClose }) {
               {creatingBox ? '…' : 'Create'}
             </button>
           </form>
+        </div>
+
+        {/* Footer */}
+        <div className="px-5 py-4 border-t border-border flex gap-3">
+          <button
+            onClick={onClose}
+            disabled={submitting}
+            className="flex-1 py-2 border border-border text-text-muted rounded-sm text-sm hover:border-text transition-colors disabled:opacity-50"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={handleSubmit}
+            disabled={submitting || stagedBoxIds.size === 0}
+            className="flex-1 py-2 bg-cta text-white rounded-sm text-sm font-semibold hover:bg-cta-dark disabled:opacity-50 transition-colors"
+          >
+            {submitting ? 'Saving…' : 'Save'}
+          </button>
         </div>
       </div>
     </div>
