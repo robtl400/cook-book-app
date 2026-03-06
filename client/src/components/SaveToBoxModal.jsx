@@ -128,9 +128,6 @@ export default function SaveToBoxModal({ postId, onClose }) {
                       <span className="text-sm text-text group-hover:text-accent transition-colors flex-1">
                         {box.name}
                       </span>
-                      {box.is_default && (
-                        <span className="text-xs text-text-dim">{box.box_type}</span>
-                      )}
                       {busy && (
                         <span className="w-4 h-4 border-2 border-accent border-t-transparent rounded-full animate-spin" />
                       )}
