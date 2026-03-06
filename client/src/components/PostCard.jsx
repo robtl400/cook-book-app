@@ -6,11 +6,7 @@ import SaveToBoxModal from './SaveToBoxModal';
 import { useAuth } from '../context/AuthContext';
 
 function ImagePlaceholder() {
-  return (
-    <div className="w-full h-full bg-surface-input flex items-center justify-center">
-      <span className="text-4xl opacity-40">🍽</span>
-    </div>
-  );
+  return <div className="w-full h-full bg-gradient-to-br from-cta/15 to-surface-input" />;
 }
 
 export default function PostCard({ post }) {
@@ -30,7 +26,7 @@ export default function PostCard({ post }) {
     <>
       <div
         onClick={handleCardClick}
-        className="bg-surface-raised border border-border rounded overflow-hidden cursor-pointer hover:shadow-md hover:border-cta/30 transition-all"
+        className="bg-surface-raised border border-border rounded overflow-hidden cursor-pointer hover:shadow-md hover:border-cta/30 transition-all flex flex-col"
       >
         {/* Hero image */}
         <div className="relative h-48 bg-surface-input overflow-hidden">
@@ -46,7 +42,7 @@ export default function PostCard({ post }) {
           )}
         </div>
 
-        <div className="p-4">
+        <div className="p-4 flex flex-col flex-1">
           {/* Title + description */}
           <h2 className="font-semibold text-text text-base leading-snug line-clamp-2 mb-1">
             {post.title}
@@ -95,7 +91,7 @@ export default function PostCard({ post }) {
           />
 
           {/* Metadata chips */}
-          <div className="flex flex-wrap gap-1.5 mt-2">
+          <div className="flex flex-wrap gap-1.5 mt-2 mb-3">
             {post.cook_time_minutes && (
               <span className="text-xs px-2 py-0.5 bg-surface-input text-text-muted rounded-full">
                 ⏱ {post.cook_time_minutes}m
@@ -114,27 +110,27 @@ export default function PostCard({ post }) {
           </div>
 
           {/* Action row */}
-          <div className="flex items-center gap-2 mt-3 pt-3 border-t border-border/60">
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                navigate(`/posts/${post.id}/cook`);
-              }}
-              className="flex-1 text-xs font-medium py-1.5 px-3 bg-cta text-white rounded-sm hover:bg-cta-dark transition-colors"
-            >
-              I Cooked This
-            </button>
+          <div className="flex items-center gap-2 mt-auto pt-3 border-t border-border/60">
             {user && (
               <button
                 onClick={(e) => {
                   e.stopPropagation();
                   setShowSaveModal(true);
                 }}
-                className="text-xs font-medium py-1.5 px-3 border border-border text-accent rounded-sm hover:border-accent transition-colors"
+                className="flex-1 text-xs font-medium py-1.5 px-3 bg-cta text-white rounded-sm hover:bg-cta-dark transition-colors"
               >
-                Save
+                Save to Recipe Box
               </button>
             )}
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                navigate(`/posts/${post.id}/cook`);
+              }}
+              className="text-xs font-medium py-1.5 px-3 border border-border text-accent rounded-sm hover:border-accent transition-colors"
+            >
+              I Cooked This!
+            </button>
             <Link
               to={`/posts/${post.id}`}
               onClick={(e) => e.stopPropagation()}

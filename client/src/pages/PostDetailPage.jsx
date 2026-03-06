@@ -93,9 +93,7 @@ export default function PostDetailPage() {
             />
           </div>
         ) : (
-          <div className="rounded mb-6 h-48 bg-surface-input flex items-center justify-center">
-            <span className="text-6xl opacity-30">🍽</span>
-          </div>
+          <div className="rounded mb-6 h-64 sm:h-80 bg-gradient-to-br from-cta/15 to-surface-input" />
         )}
 
         {/* Title */}
