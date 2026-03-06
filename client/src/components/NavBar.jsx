@@ -1,10 +1,11 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 export default function NavBar() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [searchQuery, setSearchQuery] = useState('');
 
   const handleSearchKeyDown = (e) => {
@@ -24,19 +25,33 @@ export default function NavBar() {
       <div className="max-w-6xl mx-auto px-4 h-16 flex items-center gap-3">
         {/* Logo */}
         <Link
-          to="/"
-          className="text-xl font-bold text-accent hover:text-accent-dark shrink-0"
+          to={user ? '/feed' : '/'}
+          className="text-3xl font-bold leading-none text-accent hover:text-accent-dark shrink-0"
         >
           CookBook
         </Link>
 
-        {/* Explore link — always visible */}
-        <Link
-          to="/explore"
-          className="hidden sm:block text-sm font-medium text-text-muted hover:text-accent transition-colors shrink-0"
-        >
-          Explore
-        </Link>
+        {/* Stacked Feed + Explore links */}
+        <div className="hidden sm:flex flex-col shrink-0">
+          {user && (
+            <Link
+              to="/feed"
+              className={`text-xs font-medium leading-tight transition-colors ${
+                location.pathname === '/feed' ? 'text-accent' : 'text-text-muted hover:text-accent'
+              }`}
+            >
+              Feed
+            </Link>
+          )}
+          <Link
+            to="/explore"
+            className={`text-xs font-medium leading-tight transition-colors ${
+              location.pathname === '/explore' ? 'text-accent' : 'text-text-muted hover:text-accent'
+            }`}
+          >
+            Explore
+          </Link>
+        </div>
 
         {/* Search */}
         <div className="flex-1 min-w-0 max-w-sm">

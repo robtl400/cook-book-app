@@ -127,48 +127,46 @@ def search_users():
 
 
 # ---------------------------------------------------------------------------
-# Explore — most-saved and most-cooked in last 30 days
+# Explore — single sorted list of 12 recipes
 # ---------------------------------------------------------------------------
 
 @explore_bp.get("/explore")
 def explore():
+    sort = request.args.get("sort", "recent")
+    limit = 12
     cutoff = datetime.utcnow() - timedelta(days=30)
-    limit = 10
 
-    # Most saved overall (any box)
-    most_saved_rows = (
-        db.session.query(BoxPost.post_id, func.count(BoxPost.post_id).label("save_count"))
-        .filter(BoxPost.added_at >= cutoff)
-        .group_by(BoxPost.post_id)
-        .order_by(func.count(BoxPost.post_id).desc())
-        .limit(limit)
-        .all()
-    )
-    saved_ids = [r.post_id for r in most_saved_rows]
+    if sort == "most_saved":
+        rows = (
+            db.session.query(BoxPost.post_id, func.count(BoxPost.post_id).label("save_count"))
+            .filter(BoxPost.added_at >= cutoff)
+            .group_by(BoxPost.post_id)
+            .order_by(func.count(BoxPost.post_id).desc())
+            .limit(limit)
+            .all()
+        )
+        ids = [r.post_id for r in rows]
+        posts_map = {p.id: p for p in RecipePost.query.filter(RecipePost.id.in_(ids)).all()}
+        posts = [posts_map[pid] for pid in ids if pid in posts_map]
 
-    # Most cooked (saved to a "cooked" type box)
-    most_cooked_rows = (
-        db.session.query(BoxPost.post_id, func.count(BoxPost.post_id).label("cook_count"))
-        .join(RecipeBox, RecipeBox.id == BoxPost.box_id)
-        .filter(RecipeBox.box_type == "cooked", BoxPost.added_at >= cutoff)
-        .group_by(BoxPost.post_id)
-        .order_by(func.count(BoxPost.post_id).desc())
-        .limit(limit)
-        .all()
-    )
-    cooked_ids = [r.post_id for r in most_cooked_rows]
+    elif sort == "most_cooked":
+        rows = (
+            db.session.query(BoxPost.post_id, func.count(BoxPost.post_id).label("cook_count"))
+            .join(RecipeBox, RecipeBox.id == BoxPost.box_id)
+            .filter(RecipeBox.box_type == "cooked", BoxPost.added_at >= cutoff)
+            .group_by(BoxPost.post_id)
+            .order_by(func.count(BoxPost.post_id).desc())
+            .limit(limit)
+            .all()
+        )
+        ids = [r.post_id for r in rows]
+        posts_map = {p.id: p for p in RecipePost.query.filter(RecipePost.id.in_(ids)).all()}
+        posts = [posts_map[pid] for pid in ids if pid in posts_map]
 
-    def _fetch_posts(ids):
-        if not ids:
-            return []
-        posts = RecipePost.query.filter(RecipePost.id.in_(ids)).all()
-        post_map = {p.id: p for p in posts}
-        return [post_map[pid] for pid in ids if pid in post_map]
+    else:  # recent (default)
+        posts = RecipePost.query.order_by(Post.created_at.desc()).limit(limit).all()
 
     return jsonify({
-        "data": {
-            "most_saved": recipe_posts_list_schema.dump(_fetch_posts(saved_ids)),
-            "most_cooked": recipe_posts_list_schema.dump(_fetch_posts(cooked_ids)),
-        },
+        "data": {"posts": recipe_posts_list_schema.dump(posts)},
         "message": "Success",
     }), 200
