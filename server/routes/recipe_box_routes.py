@@ -64,9 +64,17 @@ def get_box(box_id):
     post_map = {p.id: p for p in posts}
     ordered_posts = [post_map[pid] for pid in post_ids if pid in post_map]
 
+    box_data = recipe_box_schema.dump(box)
+    if box.user:
+        box_data["user"] = {
+            "id": box.user.id,
+            "display_name": box.user.display_name,
+            "username": box.user.username,
+        }
+
     return jsonify({
         "data": {
-            "box": recipe_box_schema.dump(box),
+            "box": box_data,
             "posts": recipe_posts_list_schema.dump(ordered_posts),
         },
         "message": "Success",

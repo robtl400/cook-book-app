@@ -173,7 +173,7 @@ export default function CommentSection({ postId, postOwnerId }) {
   }
 
   return (
-    <section className="mt-10">
+    <section className="mt-10 bg-surface-raised rounded-lg p-6 border border-border">
       <h2 className="text-lg font-semibold text-text mb-4">
         Comments {comments.length > 0 && <span className="text-text-muted font-normal text-base">({comments.length})</span>}
       </h2>
