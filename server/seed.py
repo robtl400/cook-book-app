@@ -50,7 +50,7 @@ def clear_data():
 
 def make_default_boxes(user):
     boxes = [
-        RecipeBox(user_id=user.id, name="Recipe Box",   box_type="liked",        is_default=True),
+        RecipeBox(user_id=user.id, name="My Recipe Box", box_type="liked",        is_default=True),
         RecipeBox(user_id=user.id, name="Cooked",       box_type="cooked",       is_default=True),
         RecipeBox(user_id=user.id, name="Want to Try",  box_type="want_to_try",  is_default=True),
     ]

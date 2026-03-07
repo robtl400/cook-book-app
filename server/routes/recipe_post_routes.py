@@ -286,6 +286,20 @@ def delete_post(post_id):
 
 
 # ---------------------------------------------------------------------------
+# Get boxes (for current user) that contain a post
+# ---------------------------------------------------------------------------
+
+@recipe_post_bp.get("/<int:post_id>/saved-boxes")
+@login_required
+def get_saved_boxes(post_id):
+    entries = BoxPost.query.join(RecipeBox).filter(
+        BoxPost.post_id == post_id,
+        RecipeBox.user_id == current_user.id,
+    ).all()
+    return jsonify({"data": [e.box_id for e in entries], "message": "Success"}), 200
+
+
+# ---------------------------------------------------------------------------
 # Save post to a box
 # ---------------------------------------------------------------------------
 

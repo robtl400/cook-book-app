@@ -31,7 +31,7 @@ export default function MyRecipeBoxPage() {
         const recipeBox = allBoxes.find((b) => b.box_type === 'liked');
         if (recipeBox) setSelectedBoxId(recipeBox.id);
       })
-      .catch((err) => setError(err.message || 'Failed to load your Recipe Box.'))
+      .catch((err) => setError(err.message || 'Failed to load My Recipe Box.'))
       .finally(() => setLoading(false));
   }, [user]);
 
@@ -86,7 +86,7 @@ export default function MyRecipeBoxPage() {
     try {
       await api.delete(`/posts/${removeTarget}/save/${recipeBox.id}`);
       setPosts((prev) => prev.filter((p) => p.id !== removeTarget));
-      toast.success('Removed from Recipe Box and all lists.');
+      toast.success('Removed from My Recipe Box and all lists.');
     } catch (err) {
       toast.error(err.message || 'Failed to remove recipe.');
     } finally {
@@ -128,7 +128,7 @@ export default function MyRecipeBoxPage() {
             className="border border-border rounded-md px-3 py-1.5 text-sm bg-surface-input text-text focus:outline-none focus:ring-2 focus:ring-cta"
           >
             {recipeBox && (
-              <option value={recipeBox.id}>All Recipes (Recipe Box)</option>
+              <option value={recipeBox.id}>All Recipes (My Recipe Box)</option>
             )}
             {subBoxes.map((box) => (
               <option key={box.id} value={box.id}>{box.name}</option>
@@ -175,7 +175,7 @@ export default function MyRecipeBoxPage() {
                 <button
                   onClick={() => handleRemove(post.id)}
                   className="absolute top-2 right-2 w-7 h-7 bg-surface-raised/90 border border-border rounded-full text-text-muted hover:text-red-400 hover:border-red-400/60 flex items-center justify-center text-base leading-none transition-colors opacity-0 group-hover:opacity-100"
-                  title={isViewingRecipeBox ? 'Remove from Recipe Box' : `Remove from ${selectedBox?.name}`}
+                  title={isViewingRecipeBox ? 'Remove from My Recipe Box' : `Remove from ${selectedBox?.name}`}
                 >
                   ×
                 </button>
@@ -195,7 +195,7 @@ export default function MyRecipeBoxPage() {
             className="bg-surface-raised rounded shadow-xl w-full max-w-sm border border-border p-6"
             onClick={(e) => e.stopPropagation()}
           >
-            <h3 className="font-semibold text-text mb-2">Remove from Recipe Box?</h3>
+            <h3 className="font-semibold text-text mb-2">Remove from My Recipe Box?</h3>
             <p className="text-sm text-text-muted mb-5">
               This will also remove the recipe from all your other lists (Cooked, Want to Try, etc.).
             </p>

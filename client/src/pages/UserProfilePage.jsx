@@ -292,7 +292,7 @@ export default function UserProfilePage() {
               to={`/boxes/${recipeBoxId}`}
               className="inline-flex items-center gap-1 text-sm text-accent hover:underline mt-3"
             >
-              View Recipe Box →
+              View My Recipe Box →
             </Link>
           ) : null}
         </div>

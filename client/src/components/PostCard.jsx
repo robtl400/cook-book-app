@@ -119,7 +119,7 @@ export default function PostCard({ post }) {
                 }}
                 className="flex-1 text-xs font-medium py-1.5 px-3 bg-cta text-white rounded-sm hover:bg-cta-dark transition-colors"
               >
-                Save to Recipe Box
+                Save to My Recipe Box
               </button>
             )}
             <button

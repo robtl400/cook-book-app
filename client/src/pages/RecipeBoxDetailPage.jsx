@@ -117,7 +117,7 @@ export default function RecipeBoxDetailPage() {
     try {
       await api.delete(`/posts/${removeTarget}/save/${id}`);
       setPosts((prev) => prev.filter((p) => p.id !== removeTarget));
-      toast.success('Removed from Recipe Box and all lists.');
+      toast.success('Removed from My Recipe Box and all lists.');
     } catch (err) {
       toast.error(err.message || 'Failed to remove recipe.');
     } finally {
@@ -271,7 +271,7 @@ export default function RecipeBoxDetailPage() {
                 <button
                   onClick={() => handleRemoveClick(post.id)}
                   className="absolute top-2 right-2 w-7 h-7 bg-surface-raised/90 border border-border rounded-full text-text-muted hover:text-red-400 hover:border-red-400/60 flex items-center justify-center text-base leading-none transition-colors opacity-0 group-hover:opacity-100"
-                  title={box.box_type === 'liked' ? 'Remove from Recipe Box' : `Remove from ${box.name}`}
+                  title={box.box_type === 'liked' ? 'Remove from My Recipe Box' : `Remove from ${box.name}`}
                 >
                   ×
                 </button>
@@ -291,7 +291,7 @@ export default function RecipeBoxDetailPage() {
             className="bg-surface-raised rounded shadow-xl w-full max-w-sm border border-border p-6"
             onClick={(e) => e.stopPropagation()}
           >
-            <h3 className="font-semibold text-text mb-2">Remove from Recipe Box?</h3>
+            <h3 className="font-semibold text-text mb-2">Remove from My Recipe Box?</h3>
             <p className="text-sm text-text-muted mb-5">
               This will also remove the recipe from all your other lists (Cooked, Want to Try, etc.).
             </p>
