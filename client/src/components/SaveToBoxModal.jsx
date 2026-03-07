@@ -11,17 +11,46 @@ export default function SaveToBoxModal({ postId, onClose }) {
   const [creatingBox, setCreatingBox] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
-  // Local-only staged selections — nothing hits the API until Submit
+  // Whether the liked (My Recipe Box) is checked
+  const [likedChecked, setLikedChecked] = useState(true);
+  // Whether the recipe was in liked when the modal opened
+  const [initialSavedInLiked, setInitialSavedInLiked] = useState(false);
+  // Desired final state for sub-boxes (pre-populated from saved state on load)
   const [stagedBoxIds, setStagedBoxIds] = useState(new Set());
+  // Snapshot of sub-box membership when modal opened — used to diff add vs remove
+  const [initialSavedSubBoxIds, setInitialSavedSubBoxIds] = useState(new Set());
 
   useEffect(() => {
     if (!user) return;
-    api
-      .get(`/users/${user.id}/boxes`)
-      .then((data) => setBoxes(data.data ?? data))
+    Promise.all([
+      api.get(`/users/${user.id}/boxes`),
+      api.get(`/posts/${postId}/saved-boxes`),
+    ])
+      .then(([boxesRes, savedRes]) => {
+        const allBoxes = boxesRes.data ?? boxesRes;
+        const savedIds = new Set(savedRes.data ?? savedRes);
+        setBoxes(allBoxes);
+        const likedBox = allBoxes.find((b) => b.box_type === 'liked');
+        setInitialSavedInLiked(savedIds.has(likedBox?.id));
+        const savedSubIds = new Set([...savedIds].filter((id) => id !== likedBox?.id));
+        setStagedBoxIds(new Set(savedSubIds));
+        setInitialSavedSubBoxIds(new Set(savedSubIds));
+      })
       .catch(() => toast.error('Could not load your boxes.'))
       .finally(() => setLoading(false));
-  }, [user]);
+  }, [user, postId]);
+
+  function handleLikedToggle() {
+    if (likedChecked) {
+      // Unchecking liked — clear all sub-boxes
+      setLikedChecked(false);
+      setStagedBoxIds(new Set());
+    } else {
+      // Re-checking liked — restore sub-boxes to initial saved state
+      setLikedChecked(true);
+      setStagedBoxIds(new Set(initialSavedSubBoxIds));
+    }
+  }
 
   function handleToggle(boxId) {
     setStagedBoxIds((prev) => {
@@ -33,21 +62,51 @@ export default function SaveToBoxModal({ postId, onClose }) {
   }
 
   async function handleSubmit() {
-    if (stagedBoxIds.size === 0) { onClose(); return; }
     setSubmitting(true);
-    let saved = 0;
-    for (const boxId of stagedBoxIds) {
-      try {
-        await api.post(`/posts/${postId}/save`, { box_id: boxId });
-        saved++;
-      } catch (err) {
-        if (err.status === 409) {
-          saved++; // already saved — still a success
+    let changed = false;
+    const likedBox = boxes.find((b) => b.box_type === 'liked');
+
+    if (!likedChecked) {
+      // Cascade remove: DELETE from liked removes from all sub-boxes too
+      if (likedBox && initialSavedInLiked) {
+        try {
+          await api.delete(`/posts/${postId}/save/${likedBox.id}`);
+          changed = true;
+        } catch { /* silently skip */ }
+      }
+    } else {
+      // Normal save path: ensure liked is saved, then diff sub-boxes
+      if (likedBox) {
+        try {
+          await api.post(`/posts/${postId}/save`, { box_id: likedBox.id });
+          changed = true;
+        } catch (err) {
+          if (err.status === 409) { /* already there — fine */ }
         }
-        // other errors silently skipped; toast below handles partial failures
+      }
+      // Add newly staged sub-boxes
+      for (const boxId of stagedBoxIds) {
+        if (!initialSavedSubBoxIds.has(boxId)) {
+          try {
+            await api.post(`/posts/${postId}/save`, { box_id: boxId });
+            changed = true;
+          } catch (err) {
+            if (err.status === 409) changed = true;
+          }
+        }
+      }
+      // Remove un-staged sub-boxes
+      for (const boxId of initialSavedSubBoxIds) {
+        if (!stagedBoxIds.has(boxId)) {
+          try {
+            await api.delete(`/posts/${postId}/save/${boxId}`);
+            changed = true;
+          } catch { /* silently skip */ }
+        }
       }
     }
-    if (saved > 0) toast.success('Saved!');
+
+    if (changed) toast.success(likedChecked ? 'Saved!' : 'Removed from all lists.');
     setSubmitting(false);
     onClose();
   }
@@ -89,7 +148,7 @@ export default function SaveToBoxModal({ postId, onClose }) {
       >
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-4 border-b border-border">
-          <h2 className="font-semibold text-text">Save to Recipe Box</h2>
+          <h2 className="font-semibold text-text">Save to My Recipe Box</h2>
           <button
             onClick={onClose}
             className="text-text-muted hover:text-text transition-colors text-lg leading-none"
@@ -111,19 +170,15 @@ export default function SaveToBoxModal({ postId, onClose }) {
             <ul className="space-y-1">
               {sortedBoxes.map((box) => {
                 const isRecipeBox = box.box_type === 'liked';
-                const checked = isRecipeBox || stagedBoxIds.has(box.id);
+                const checked = isRecipeBox ? likedChecked : stagedBoxIds.has(box.id);
                 return (
                   <li key={box.id}>
-                    <label
-                      className={`flex items-center gap-3 py-2 group ${
-                        isRecipeBox ? 'cursor-default' : 'cursor-pointer'
-                      }`}
-                    >
+                    <label className="flex items-center gap-3 py-2 cursor-pointer group">
                       <input
                         type="checkbox"
                         checked={checked}
-                        disabled={isRecipeBox || submitting}
-                        onChange={() => !isRecipeBox && handleToggle(box.id)}
+                        disabled={submitting || (!isRecipeBox && !likedChecked)}
+                        onChange={() => isRecipeBox ? handleLikedToggle() : handleToggle(box.id)}
                         className="w-4 h-4 accent-cta rounded cursor-pointer disabled:cursor-default"
                       />
                       <span
@@ -135,11 +190,6 @@ export default function SaveToBoxModal({ postId, onClose }) {
                       >
                         {box.name}
                       </span>
-                      {isRecipeBox && (
-                        <span className="text-xs px-1.5 py-0.5 bg-cta/10 text-cta rounded-full shrink-0">
-                          Always saved
-                        </span>
-                      )}
                     </label>
                   </li>
                 );
@@ -147,6 +197,14 @@ export default function SaveToBoxModal({ postId, onClose }) {
             </ul>
           )}
         </div>
+
+        {/* Warning banner when liked is unchecked */}
+        {!likedChecked && (
+          <div className="px-5 py-3 bg-amber-50 border-t border-amber-200 text-amber-800 text-xs leading-relaxed">
+            Removing from My Recipe Box will also remove this recipe from{' '}
+            <strong>all your other lists</strong>.
+          </div>
+        )}
 
         {/* Create new box */}
         <div className="px-5 py-4 border-t border-border bg-surface/50">
@@ -179,10 +237,16 @@ export default function SaveToBoxModal({ postId, onClose }) {
           </button>
           <button
             onClick={handleSubmit}
-            disabled={submitting || stagedBoxIds.size === 0}
-            className="flex-1 py-2 bg-cta text-white rounded-sm text-sm font-semibold hover:bg-cta-dark disabled:opacity-50 transition-colors"
+            disabled={submitting}
+            className={`flex-1 py-2 rounded-sm text-sm font-semibold disabled:opacity-50 transition-colors ${
+              likedChecked
+                ? 'bg-cta text-white hover:bg-cta-dark'
+                : 'bg-red-600 text-white hover:bg-red-700'
+            }`}
           >
-            {submitting ? 'Saving…' : 'Save'}
+            {submitting
+              ? (likedChecked ? 'Saving…' : 'Removing…')
+              : (likedChecked ? 'Save' : 'Remove from all lists')}
           </button>
         </div>
       </div>

@@ -60,7 +60,7 @@ export default function NavBar() {
                 location.pathname === '/recipe-box' ? 'text-accent' : 'text-text-muted hover:text-accent'
               }`}
             >
-              Recipe Box
+              My Recipe Box
             </Link>
           )}
         </div>
