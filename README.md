@@ -11,7 +11,7 @@ CookBook is a full-stack social recipe-sharing platform inspired by Letterboxd. 
 - **Frontend:** [cook-book-app.netlify.app](https://cook-book-app.netlify.app) *(replace with your Netlify URL)*
 - **API:** Hosted on Render (free tier — first request may be slow while the dyno wakes up)
 
-**Demo credentials:** `alice` / `password123` (or `bob`, `cora`, `cookbook`)
+**Demo credentials:** `rob` / `password123` (or `cookbook`, `masha`, `sonia`)
 
 ---
 
@@ -283,14 +283,18 @@ The frontend runs at `http://localhost:5173`. API requests proxy to `http://loca
 
 ### Seed users
 
-| Username | Password |
-|----------|----------|
-| alice | password123 |
-| bob | password123 |
-| cora | password123 |
-| cookbook | password123 |
+All seed accounts use password `password123`. Key accounts:
 
-The seed creates ~33 recipe posts across 4 users, with realistic attribution chains, comments, follows, and box memberships.
+| Username | Display Name |
+|----------|--------------|
+| rob | Rob Lord |
+| cookbook | CookBook |
+| masha | Masha Shapiro |
+| sonia | Sonia Verma |
+
+Additional accounts: `mike_sahl`, `julianne`, `rachel_and_mike`, `zach`, `keith`, `gtr`, `carolyn`, `jocelyn`, `cody`, `beth`
+
+The teacher (or grader) can also register a new account — no invite required.
 
 ---
 
