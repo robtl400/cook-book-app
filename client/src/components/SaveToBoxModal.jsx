@@ -22,21 +22,27 @@ export default function SaveToBoxModal({ postId, onClose }) {
 
   useEffect(() => {
     if (!user) return;
-    Promise.all([
+    Promise.allSettled([
       api.get(`/users/${user.id}/boxes`),
       api.get(`/posts/${postId}/saved-boxes`),
     ])
-      .then(([boxesRes, savedRes]) => {
-        const allBoxes = boxesRes.data ?? boxesRes;
-        const savedIds = new Set(savedRes.data ?? savedRes);
+      .then(([boxesResult, savedResult]) => {
+        if (boxesResult.status === 'rejected') {
+          toast.error('Could not load your boxes.');
+          return;
+        }
+        const allBoxes = boxesResult.value.data ?? boxesResult.value;
         setBoxes(allBoxes);
-        const likedBox = allBoxes.find((b) => b.box_type === 'liked');
-        setInitialSavedInLiked(savedIds.has(likedBox?.id));
-        const savedSubIds = new Set([...savedIds].filter((id) => id !== likedBox?.id));
-        setStagedBoxIds(new Set(savedSubIds));
-        setInitialSavedSubBoxIds(new Set(savedSubIds));
+
+        if (savedResult.status === 'fulfilled') {
+          const savedIds = new Set(savedResult.value.data ?? savedResult.value);
+          const likedBox = allBoxes.find((b) => b.box_type === 'liked');
+          setInitialSavedInLiked(savedIds.has(likedBox?.id));
+          const savedSubIds = new Set([...savedIds].filter((id) => id !== likedBox?.id));
+          setStagedBoxIds(new Set(savedSubIds));
+          setInitialSavedSubBoxIds(new Set(savedSubIds));
+        }
       })
-      .catch(() => toast.error('Could not load your boxes.'))
       .finally(() => setLoading(false));
   }, [user, postId]);
 

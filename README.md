@@ -214,6 +214,8 @@ cook-book-app/
 
 ## Local Development
 
+> **Environment variables:** Copy the example files below and fill in your values. Real credentials are not committed to this repo — contact the author if needed.
+
 ### Prerequisites
 
 - Python 3.11+
@@ -238,11 +240,9 @@ pip install -r requirements.txt
 
 Create a `.env` file in the **project root** (not `server/`):
 
-```env
-SECRET_KEY=replace-me-with-a-long-random-string
-DATABASE_URL=postgresql://localhost/cookbook_dev
-CLOUDINARY_CLOUD_NAME=your_cloud_name
-CLOUDINARY_UPLOAD_PRESET=your_unsigned_preset
+```bash
+cp .env.example .env
+# then open .env and fill in your values
 ```
 
 Create the database, run migrations, and seed:
@@ -268,9 +268,9 @@ npm install
 
 Create `client/.env.local`:
 
-```env
-VITE_CLOUDINARY_CLOUD_NAME=your_cloud_name
-VITE_CLOUDINARY_UPLOAD_PRESET=your_unsigned_preset
+```bash
+cp client/.env.local.example client/.env.local
+# then open client/.env.local and fill in your values
 ```
 
 Start the dev server:
