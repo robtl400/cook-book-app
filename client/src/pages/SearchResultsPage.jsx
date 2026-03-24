@@ -69,15 +69,15 @@ export default function SearchResultsPage() {
 
       const [recipeRes, userRes] = await Promise.all([
         isAt
-          ? Promise.resolve({ data: [] })
+          ? Promise.resolve([])
           : api.get(`/search/recipes?q=${encodeURIComponent(q)}`),
         isAt
           ? api.get(`/search/users?q=${encodeURIComponent(stripped)}`)
-          : Promise.resolve({ data: [] }),
+          : Promise.resolve([]),
       ]);
 
-      setRecipes(recipeRes.data ?? []);
-      setUsers(userRes.data ?? []);
+      setRecipes(recipeRes ?? []);
+      setUsers(userRes ?? []);
     } catch (err) {
       setError(err.message || 'Search failed. Please try again.');
     } finally {
@@ -98,7 +98,7 @@ export default function SearchResultsPage() {
       const res = await api.get(
         `/search/tags?tag=${encodeURIComponent(tag.name)}&category=${encodeURIComponent(tag.category)}`
       );
-      setRecipes(res.data ?? []);
+      setRecipes(res ?? []);
       setUsers([]);
     } catch (err) {
       setError(err.message || 'Failed to filter by tag.');

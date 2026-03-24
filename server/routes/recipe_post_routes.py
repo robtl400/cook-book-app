@@ -392,6 +392,8 @@ def add_comment(post_id):
     body = (data.get("body") or "").strip()
     if not body:
         return jsonify({"error": "Comment body is required", "message": "Failed"}), 400
+    if len(body) > 1000:
+        return jsonify({"error": "Comment must be 1000 characters or fewer"}), 400
 
     parent_id = data.get("parent_id")
     if parent_id is not None:

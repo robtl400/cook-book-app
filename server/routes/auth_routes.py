@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 from flask_login import login_user, logout_user, login_required, current_user
-from app import db
+from app import db, limiter
 from models.user import User
 from models.recipe_box import RecipeBox
 from schemas.user_schema import user_schema
@@ -9,6 +9,7 @@ auth_bp = Blueprint("auth", __name__, url_prefix="/api/auth")
 
 
 @auth_bp.post("/register")
+@limiter.limit("10 per minute")
 def register():
     data = request.get_json()
     if not data:
@@ -53,6 +54,7 @@ def register():
 
 
 @auth_bp.post("/login")
+@limiter.limit("10 per minute")
 def login():
     data = request.get_json()
     if not data:

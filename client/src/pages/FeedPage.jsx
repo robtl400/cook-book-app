@@ -16,8 +16,7 @@ export default function FeedPage() {
 
   const loadPosts = useCallback(async (currentOffset, append = false) => {
     try {
-      const data = await api.get(`/posts/feed?limit=${LIMIT}&offset=${currentOffset}`);
-      const results = data.data ?? data;
+      const results = await api.get(`/posts/feed?limit=${LIMIT}&offset=${currentOffset}`);
       setPosts((prev) => (append ? [...prev, ...results] : results));
       setHasMore(results.length === LIMIT);
       setOffset(currentOffset + results.length);

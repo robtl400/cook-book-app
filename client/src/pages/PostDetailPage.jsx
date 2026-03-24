@@ -39,7 +39,7 @@ export default function PostDetailPage() {
     setError(null);
     api
       .get(`/posts/${id}`)
-      .then((data) => setPost(data.data ?? data))
+      .then((data) => setPost(data))
       .catch((err) => setError(err.message || 'Post not found.'))
       .finally(() => setLoading(false));
   }, [id]);
