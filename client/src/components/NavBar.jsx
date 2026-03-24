@@ -11,14 +11,17 @@ export default function NavBar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef(null);
   const hamburgerRef = useRef(null);
+  const menuDidMount = useRef(false);
 
   // Close hamburger on route change
   useEffect(() => {
     setMenuOpen(false);
   }, [location.pathname]);
 
-  // Focus first menu item when menu opens; return focus to hamburger on close
+  // Focus first menu item when menu opens; return focus to hamburger on close.
+  // Skip the initial mount run so the hamburger doesn't steal focus on page load.
   useEffect(() => {
+    if (!menuDidMount.current) { menuDidMount.current = true; return; }
     if (menuOpen && menuRef.current) {
       const firstFocusable = menuRef.current.querySelector('a, button');
       firstFocusable?.focus();
@@ -137,7 +140,7 @@ export default function NavBar() {
             ref={hamburgerRef}
             onClick={() => setMenuOpen((v) => !v)}
             className="sm:hidden flex items-center justify-center min-h-[44px] min-w-[44px] text-text-muted hover:text-text transition-colors"
-            aria-label="Open menu"
+            aria-label={menuOpen ? 'Close menu' : 'Open menu'}
             aria-expanded={menuOpen}
             aria-controls="nav-mobile-menu"
           >
@@ -160,10 +163,12 @@ export default function NavBar() {
             const focusable = menuRef.current.querySelectorAll('a, button');
             const first = focusable[0];
             const last = focusable[focusable.length - 1];
-            if (e.shiftKey && document.activeElement === first) {
+            const active = document.activeElement;
+            if (!menuRef.current.contains(active)) return;
+            if (e.shiftKey && active === first) {
               e.preventDefault();
               last.focus();
-            } else if (!e.shiftKey && document.activeElement === last) {
+            } else if (!e.shiftKey && active === last) {
               e.preventDefault();
               first.focus();
             }
