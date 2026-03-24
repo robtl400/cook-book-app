@@ -31,7 +31,7 @@ export default function RegisterPage() {
   return (
     <div className="flex items-center justify-center min-h-[calc(100vh-4rem)] bg-surface px-4 py-8">
       <div className="w-full max-w-sm bg-surface-auth rounded p-8 shadow-xl">
-        <h1 className="text-2xl font-bold text-gray-800 mb-6 text-center">Create your account</h1>
+        <h1 className="text-2xl font-bold text-[var(--color-text-on-light)] mb-6 text-center">Create your account</h1>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           {errors.root && (
@@ -41,14 +41,14 @@ export default function RegisterPage() {
           )}
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="email">
+            <label className="block text-sm font-medium text-[var(--color-text-on-light)] mb-1" htmlFor="email">
               Email
             </label>
             <input
               id="email"
               type="email"
               autoComplete="email"
-              className="w-full px-3 py-2 border border-gray-300 rounded bg-white text-gray-800 focus:outline-none focus:border-cta"
+              className="w-full px-3 py-2 border border-[var(--color-border-light)] rounded bg-surface-auth text-[var(--color-text-on-light)] focus:outline-none focus:border-cta"
               {...register('email', { required: 'Email is required.' })}
             />
             {errors.email && (
@@ -57,14 +57,14 @@ export default function RegisterPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="username">
+            <label className="block text-sm font-medium text-[var(--color-text-on-light)] mb-1" htmlFor="username">
               Username
             </label>
             <input
               id="username"
               type="text"
               autoComplete="username"
-              className="w-full px-3 py-2 border border-gray-300 rounded bg-white text-gray-800 focus:outline-none focus:border-cta"
+              className="w-full px-3 py-2 border border-[var(--color-border-light)] rounded bg-surface-auth text-[var(--color-text-on-light)] focus:outline-none focus:border-cta"
               {...register('username', {
                 required: 'Username is required.',
                 pattern: {
@@ -79,14 +79,14 @@ export default function RegisterPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="display_name">
+            <label className="block text-sm font-medium text-[var(--color-text-on-light)] mb-1" htmlFor="display_name">
               Display name
             </label>
             <input
               id="display_name"
               type="text"
               autoComplete="name"
-              className="w-full px-3 py-2 border border-gray-300 rounded bg-white text-gray-800 focus:outline-none focus:border-cta"
+              className="w-full px-3 py-2 border border-[var(--color-border-light)] rounded bg-surface-auth text-[var(--color-text-on-light)] focus:outline-none focus:border-cta"
               {...register('display_name', { required: 'Display name is required.' })}
             />
             {errors.display_name && (
@@ -95,14 +95,14 @@ export default function RegisterPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="password">
+            <label className="block text-sm font-medium text-[var(--color-text-on-light)] mb-1" htmlFor="password">
               Password
             </label>
             <input
               id="password"
               type="password"
               autoComplete="new-password"
-              className="w-full px-3 py-2 border border-gray-300 rounded bg-white text-gray-800 focus:outline-none focus:border-cta"
+              className="w-full px-3 py-2 border border-[var(--color-border-light)] rounded bg-surface-auth text-[var(--color-text-on-light)] focus:outline-none focus:border-cta"
               {...register('password', {
                 required: 'Password is required.',
                 minLength: { value: 8, message: 'Password must be at least 8 characters.' },
@@ -114,14 +114,14 @@ export default function RegisterPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="confirm_password">
+            <label className="block text-sm font-medium text-[var(--color-text-on-light)] mb-1" htmlFor="confirm_password">
               Confirm password
             </label>
             <input
               id="confirm_password"
               type="password"
               autoComplete="new-password"
-              className="w-full px-3 py-2 border border-gray-300 rounded bg-white text-gray-800 focus:outline-none focus:border-cta"
+              className="w-full px-3 py-2 border border-[var(--color-border-light)] rounded bg-surface-auth text-[var(--color-text-on-light)] focus:outline-none focus:border-cta"
               {...register('confirm_password', { required: 'Please confirm your password.' })}
             />
             {errors.confirm_password && (
@@ -138,7 +138,7 @@ export default function RegisterPage() {
           </button>
         </form>
 
-        <p className="mt-6 text-sm text-center text-gray-600">
+        <p className="mt-6 text-sm text-center text-[var(--color-text-on-light-muted)]">
           Already have an account?{' '}
           <Link to="/login" className="text-cta hover:underline font-medium">
             Log in

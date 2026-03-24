@@ -10,6 +10,7 @@ import StarRating from '../components/StarRating';
 import IngredientsFields from '../components/IngredientsFields';
 import StepsFields from '../components/StepsFields';
 import TagSelector from '../components/TagSelector';
+import Spinner from '../components/Spinner';
 
 const CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
 const UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
@@ -238,11 +239,7 @@ export default function RecipeFormPage() {
 
   // ── Render ───────────────────────────────────────────────────────────────
   if (pageLoading) {
-    return (
-      <div className="flex justify-center items-center min-h-[60vh]">
-        <div className="w-8 h-8 border-4 border-accent border-t-transparent rounded-full animate-spin" />
-      </div>
-    );
+    return <Spinner />;
   }
 
   if (pageError) {

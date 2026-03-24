@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { Clock, MessageCircle } from 'lucide-react';
 import StarRating from './StarRating';
 import AttributionBadge from './AttributionBadge';
 import SaveToBoxModal from './SaveToBoxModal';
@@ -25,8 +26,16 @@ export default function PostCard({ post }) {
   return (
     <>
       <div
+        role="button"
+        tabIndex={0}
         onClick={handleCardClick}
-        className="bg-surface-raised border border-border rounded overflow-hidden cursor-pointer hover:shadow-md hover:border-cta/30 transition-all flex flex-col"
+        onKeyDown={(e) => {
+          if (e.key !== 'Enter' && e.key !== ' ') return;
+          if (e.target !== e.currentTarget) return; // don't fire when inner button is focused
+          if (e.key === ' ') e.preventDefault(); // prevent page scroll
+          handleCardClick();
+        }}
+        className="bg-surface-raised border border-border rounded overflow-hidden cursor-pointer hover:shadow-md hover:border-cta/30 transition-all flex flex-col focus-visible:outline-2 focus-visible:outline-accent"
       >
         {/* Hero image */}
         <div className="relative h-48 bg-surface-input overflow-hidden">
@@ -93,8 +102,9 @@ export default function PostCard({ post }) {
           {/* Metadata chips */}
           <div className="flex flex-wrap gap-1.5 mt-2 mb-3">
             {post.cook_time_minutes && (
-              <span className="text-xs px-2 py-0.5 bg-surface-input text-text-muted rounded-full">
-                ⏱ {post.cook_time_minutes}m
+              <span className="flex items-center gap-1 text-xs px-2 py-0.5 bg-surface-input text-text-muted rounded-full">
+                <Clock size={11} aria-hidden="true" />
+                {post.cook_time_minutes}m
               </span>
             )}
             {post.difficulty && (
@@ -117,7 +127,7 @@ export default function PostCard({ post }) {
                   e.stopPropagation();
                   setShowSaveModal(true);
                 }}
-                className="flex-1 text-xs font-medium py-1.5 px-3 bg-cta text-white rounded-sm hover:bg-cta-dark transition-colors"
+                className="flex-1 text-xs font-medium py-2 px-3 min-h-[44px] bg-cta text-white rounded-sm hover:bg-cta-dark transition-colors"
               >
                 Save to My Recipe Box
               </button>
@@ -127,7 +137,7 @@ export default function PostCard({ post }) {
                 e.stopPropagation();
                 navigate(`/posts/${post.id}/cook`);
               }}
-              className="text-xs font-medium py-1.5 px-3 border border-border text-accent rounded-sm hover:border-accent transition-colors"
+              className="text-xs font-medium py-2 px-3 min-h-[44px] border border-border text-accent rounded-sm hover:border-accent transition-colors"
             >
               I Cooked This!
             </button>
@@ -136,7 +146,7 @@ export default function PostCard({ post }) {
               onClick={(e) => e.stopPropagation()}
               className="flex items-center gap-1 text-xs text-text-dim hover:text-accent transition-colors ml-auto"
             >
-              <span>💬</span>
+              <MessageCircle size={12} aria-hidden="true" />
               <span>Comments</span>
             </Link>
           </div>
