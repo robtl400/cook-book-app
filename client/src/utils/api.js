@@ -29,7 +29,7 @@ async function request(method, path, body) {
     throw err;
   }
 
-  return json;
+  return json.data;
 }
 
 export const api = {

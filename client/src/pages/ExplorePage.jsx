@@ -19,8 +19,7 @@ export default function ExplorePage() {
     setLoading(true);
     setError(null);
     try {
-      const res = await api.get(`/explore?sort=${sortValue}`);
-      const data = res.data ?? res;
+      const data = await api.get(`/explore?sort=${sortValue}`);
       setPosts(data.posts ?? []);
     } catch (err) {
       setError(err.message || 'Failed to load explore page.');

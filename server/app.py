@@ -5,10 +5,14 @@ from flask_cors import CORS
 from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 
 db = SQLAlchemy()
 migrate = Migrate()
 login_manager = LoginManager()
+# best-effort: resets on Render free-tier dyno restart
+limiter = Limiter(get_remote_address, default_limits=[])
 
 
 def create_app():
@@ -19,6 +23,7 @@ def create_app():
     db.init_app(app)
     migrate.init_app(app, db)
     login_manager.init_app(app)
+    limiter.init_app(app)
 
     # Allow requests from the Vite dev server and the deployed Netlify frontend.
     # Set FRONTEND_URL env var on Render to your Netlify URL (comma-separated for multiple).

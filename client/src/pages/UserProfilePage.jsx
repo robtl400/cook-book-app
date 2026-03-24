@@ -43,7 +43,7 @@ function EditProfileModal({ profile, onClose, onSave }) {
         bio: bio || undefined,
         profile_image_url: profileImageUrl || undefined,
       });
-      onSave(res.data ?? res);
+      onSave(res);
     } catch (err) {
       setError(err.message ?? 'Could not save changes.');
     } finally {
@@ -147,16 +147,14 @@ export default function UserProfilePage() {
       setLoading(true);
       setError('');
       try {
-        const res = await api.get(`/users/${id}`);
-        const p = res.data ?? res;
+        const p = await api.get(`/users/${id}`);
         setProfile(p);
         setFollowerCount(p.follower_count ?? 0);
 
         // Check if current user follows this profile
         if (currentUser && !isOwn) {
           try {
-            const fRes = await api.get(`/users/${id}/followers`);
-            const followers = fRes.data ?? fRes;
+            const followers = await api.get(`/users/${id}/followers`);
             setIsFollowing(followers.some(f => String(f.id) === String(currentUser.id)));
           } catch { /* ignore */ }
         }
@@ -174,7 +172,7 @@ export default function UserProfilePage() {
     if (activeTab !== 'posts') return;
     setPostsLoading(true);
     api.get(`/users/${id}/posts`)
-      .then(res => setPosts(res.data ?? res))
+      .then(res => setPosts(res))
       .catch(() => setPosts([]))
       .finally(() => setPostsLoading(false));
   }, [activeTab, id]);
@@ -184,7 +182,7 @@ export default function UserProfilePage() {
     if (isOwn) return;
     api.get(`/users/${id}/boxes`)
       .then(res => {
-        const allBoxes = res.data ?? res;
+        const allBoxes = res;
         const recipeBox = allBoxes.find(b => b.box_type === 'liked');
         if (recipeBox) setRecipeBoxId(recipeBox.id);
       })

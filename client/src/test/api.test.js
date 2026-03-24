@@ -15,11 +15,11 @@ describe('api utility', () => {
     await expect(api.get('/recipes/999')).rejects.toThrow('Not found')
   })
 
-  it('returns json on 2xx response', async () => {
+  it('returns data directly on 2xx response', async () => {
     fetch.mockResolvedValueOnce({
       ok: true,
       status: 200,
-      json: async () => ({ id: 1, title: 'Pasta' }),
+      json: async () => ({ data: { id: 1, title: 'Pasta' }, message: 'Success' }),
     })
     const result = await api.get('/recipes/1')
     expect(result).toEqual({ id: 1, title: 'Pasta' })
@@ -29,7 +29,7 @@ describe('api utility', () => {
     fetch.mockResolvedValueOnce({
       ok: true,
       status: 201,
-      json: async () => ({ id: 2 }),
+      json: async () => ({ data: { id: 2 }, message: 'Created' }),
     })
     await api.post('/recipes', { title: 'Salad' })
     const [, options] = fetch.mock.calls[0]
@@ -43,5 +43,10 @@ describe('api utility', () => {
       json: async () => ({}),
     })
     await expect(api.get('/recipes')).rejects.toThrow('HTTP 500')
+  })
+
+  it('throws on network error (fetch rejects)', async () => {
+    fetch.mockRejectedValueOnce(new Error('Network error'))
+    await expect(api.get('/recipes')).rejects.toThrow('Network error')
   })
 })
