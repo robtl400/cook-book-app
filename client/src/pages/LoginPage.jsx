@@ -26,7 +26,7 @@ export default function LoginPage() {
   return (
     <div className="flex items-center justify-center min-h-[calc(100vh-4rem)] bg-surface px-4">
       <div className="w-full max-w-sm bg-surface-auth rounded p-8 shadow-xl">
-        <h1 className="text-2xl font-bold text-gray-800 mb-6 text-center">Log in to CookBook</h1>
+        <h1 className="text-2xl font-bold text-[var(--color-text-on-light)] mb-6 text-center">Log in to CookBook</h1>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           {errors.root && (
@@ -36,14 +36,14 @@ export default function LoginPage() {
           )}
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="email">
+            <label className="block text-sm font-medium text-[var(--color-text-on-light)] mb-1" htmlFor="email">
               Email
             </label>
             <input
               id="email"
               type="email"
               autoComplete="email"
-              className="w-full px-3 py-2 border border-gray-300 rounded bg-white text-gray-800 focus:outline-none focus:border-cta"
+              className="w-full px-3 py-2 border border-[var(--color-border-light)] rounded bg-surface-auth text-[var(--color-text-on-light)] focus:outline-none focus:border-cta"
               {...register('email', { required: 'Email is required.' })}
             />
             {errors.email && (
@@ -52,14 +52,14 @@ export default function LoginPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="password">
+            <label className="block text-sm font-medium text-[var(--color-text-on-light)] mb-1" htmlFor="password">
               Password
             </label>
             <input
               id="password"
               type="password"
               autoComplete="current-password"
-              className="w-full px-3 py-2 border border-gray-300 rounded bg-white text-gray-800 focus:outline-none focus:border-cta"
+              className="w-full px-3 py-2 border border-[var(--color-border-light)] rounded bg-surface-auth text-[var(--color-text-on-light)] focus:outline-none focus:border-cta"
               {...register('password', { required: 'Password is required.' })}
             />
             {errors.password && (
@@ -76,7 +76,7 @@ export default function LoginPage() {
           </button>
         </form>
 
-        <p className="mt-6 text-sm text-center text-gray-600">
+        <p className="mt-6 text-sm text-center text-[var(--color-text-on-light-muted)]">
           Don&apos;t have an account?{' '}
           <Link to="/register" className="text-cta hover:underline font-medium">
             Sign up
