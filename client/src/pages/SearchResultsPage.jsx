@@ -69,15 +69,15 @@ export default function SearchResultsPage() {
 
       const [recipeRes, userRes] = await Promise.all([
         isAt
-          ? Promise.resolve({ data: [] })
+          ? Promise.resolve([])
           : api.get(`/search/recipes?q=${encodeURIComponent(q)}`),
         isAt
           ? api.get(`/search/users?q=${encodeURIComponent(stripped)}`)
-          : Promise.resolve({ data: [] }),
+          : Promise.resolve([]),
       ]);
 
-      setRecipes(recipeRes.data ?? []);
-      setUsers(userRes.data ?? []);
+      setRecipes(recipeRes ?? []);
+      setUsers(userRes ?? []);
     } catch (err) {
       setError(err.message || 'Search failed. Please try again.');
     } finally {
@@ -98,7 +98,7 @@ export default function SearchResultsPage() {
       const res = await api.get(
         `/search/tags?tag=${encodeURIComponent(tag.name)}&category=${encodeURIComponent(tag.category)}`
       );
-      setRecipes(res.data ?? []);
+      setRecipes(res ?? []);
       setUsers([]);
     } catch (err) {
       setError(err.message || 'Failed to filter by tag.');
@@ -191,14 +191,23 @@ export default function SearchResultsPage() {
               </div>
             ) : !hasResults ? (
               <div className="py-16 text-center">
-                <p className="text-lg text-text mb-1">No results found</p>
-                <p className="text-sm text-text-muted">
+                <div className="text-5xl mb-4">🔍</div>
+                <h2 className="text-xl font-semibold text-text mb-2">No results found</h2>
+                <p className="text-text-muted text-sm mb-6 max-w-xs mx-auto">
                   {activeTag
-                    ? `No recipes tagged "${activeTag.name}".`
+                    ? `No recipes tagged "${activeTag.name}". Try a different tag or search term.`
                     : isUserSearch
                     ? `No users match "@${strippedQuery}".`
                     : `No recipes match "${query}". Try a tag filter or a different term.`}
                 </p>
+                {!activeTag && !isUserSearch && (
+                  <Link
+                    to="/explore"
+                    className="px-5 py-2 bg-cta text-white rounded-sm text-sm font-medium hover:opacity-90 transition-opacity"
+                  >
+                    Browse Explore
+                  </Link>
+                )}
               </div>
             ) : (
               <>

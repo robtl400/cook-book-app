@@ -31,11 +31,11 @@ export default function SaveToBoxModal({ postId, onClose }) {
           toast.error('Could not load your boxes.');
           return;
         }
-        const allBoxes = boxesResult.value.data ?? boxesResult.value;
+        const allBoxes = boxesResult.value;
         setBoxes(allBoxes);
 
         if (savedResult.status === 'fulfilled') {
-          const savedIds = new Set(savedResult.value.data ?? savedResult.value);
+          const savedIds = new Set(savedResult.value);
           const likedBox = allBoxes.find((b) => b.box_type === 'liked');
           setInitialSavedInLiked(savedIds.has(likedBox?.id));
           const savedSubIds = new Set([...savedIds].filter((id) => id !== likedBox?.id));
@@ -122,8 +122,7 @@ export default function SaveToBoxModal({ postId, onClose }) {
     if (!newBoxName.trim()) return;
     setCreatingBox(true);
     try {
-      const data = await api.post('/boxes', { name: newBoxName.trim() });
-      const newBox = data.data ?? data;
+      const newBox = await api.post('/boxes', { name: newBoxName.trim() });
       setBoxes((prev) => [...prev, newBox]);
       setNewBoxName('');
       // Auto-stage the new box so it will be saved on Submit

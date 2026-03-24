@@ -35,8 +35,7 @@ export default function RecipeBoxDetailPage() {
       setLoading(true);
       setError('');
       try {
-        const res = await api.get(`/boxes/${id}`);
-        const data = res.data ?? res;
+        const data = await api.get(`/boxes/${id}`);
         // Backend wraps as { box: {...}, posts: [...] }
         setBox(data.box ?? data);
         setPosts(data.posts ?? data.entries ?? []);
@@ -64,11 +63,10 @@ export default function RecipeBoxDetailPage() {
     setEditLoading(true);
     setEditError('');
     try {
-      const res = await api.patch(`/boxes/${id}`, {
+      const updated = await api.patch(`/boxes/${id}`, {
         name: editName.trim(),
         description: editDesc.trim() || undefined,
       });
-      const updated = res.data ?? res;
       setBox(prev => ({ ...prev, ...updated }));
       setEditing(false);
       toast.success('Box updated!');

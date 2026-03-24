@@ -1,92 +1,19 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import { useForm, useFieldArray, Controller } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { useAuth } from '../context/AuthContext';
 import { api } from '../utils/api';
+import { DEFAULT_VALUES, mapPostToDefaults, mapCookToDefaults } from '../utils/recipe';
+import { useRecipeSearch } from '../hooks/useRecipeSearch';
 import StarRating from '../components/StarRating';
 import IngredientsFields from '../components/IngredientsFields';
 import StepsFields from '../components/StepsFields';
 import TagSelector from '../components/TagSelector';
+import Spinner from '../components/Spinner';
 
 const CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
 const UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
-
-const DEFAULT_VALUES = {
-  title: '',
-  description: '',
-  self_rating: 0,
-  cook_time_minutes: '',
-  servings: '',
-  difficulty: '',
-  source_type: 'original',
-  source_url: '',
-  source_credit: '',
-  source_post_id: null,
-  inspo_post_id: null,
-  tag_names: [],
-  image_url: '',
-  ingredients: [{ quantity: '', unit: '', name: '' }],
-  steps: [{ body: '' }],
-};
-
-function normalizeDifficulty(val) {
-  if (!val) return '';
-  const map = { easy: 'Easy', medium: 'Medium', hard: 'Hard' };
-  return map[val.toLowerCase()] ?? val;
-}
-
-function mapPostToDefaults(post) {
-  return {
-    title: post.title ?? '',
-    description: post.description ?? '',
-    self_rating: post.self_rating ?? 0,
-    cook_time_minutes: post.cook_time_minutes ?? '',
-    servings: post.servings ?? '',
-    difficulty: normalizeDifficulty(post.difficulty),
-    source_type: post.source_type ?? 'original',
-    source_url: post.source_url ?? '',
-    source_credit: post.source_credit ?? '',
-    source_post_id: post.source_post_id ?? null,
-    inspo_post_id: post.inspo_post_id ?? null,
-    tag_names: post.tags?.map(t => t.name) ?? [],
-    image_url: post.image_url ?? '',
-    ingredients: post.ingredients?.length
-      ? [...post.ingredients].sort((a, b) => a.sort_order - b.sort_order).map(i => ({
-          quantity: i.quantity ?? '', unit: i.unit ?? '', name: i.name,
-        }))
-      : [{ quantity: '', unit: '', name: '' }],
-    steps: post.steps?.length
-      ? [...post.steps].sort((a, b) => a.sort_order - b.sort_order).map(s => ({ body: s.body }))
-      : [{ body: '' }],
-  };
-}
-
-function mapCookToDefaults(src) {
-  // Use server-computed attribution (handles chain passthrough for nested cooks)
-  const attribution = src.attribution ?? {};
-  return {
-    ...DEFAULT_VALUES,
-    title: src.title ?? '',
-    cook_time_minutes: src.cook_time_minutes ?? '',
-    servings: src.servings ?? '',
-    difficulty: normalizeDifficulty(src.difficulty),
-    source_type: attribution.source_type ?? 'internal',
-    source_post_id: attribution.source_post_id ?? src.id,
-    source_url: attribution.source_url ?? '',
-    source_credit: attribution.source_credit ?? '',
-    inspo_post_id: attribution.inspo_post_id ?? null,
-    tag_names: src.tags?.map(t => t.name) ?? [],
-    ingredients: src.ingredients?.length
-      ? [...src.ingredients].sort((a, b) => a.sort_order - b.sort_order).map(i => ({
-          quantity: i.quantity ?? '', unit: i.unit ?? '', name: i.name,
-        }))
-      : [{ quantity: '', unit: '', name: '' }],
-    steps: src.steps?.length
-      ? [...src.steps].sort((a, b) => a.sort_order - b.sort_order).map(s => ({ body: s.body }))
-      : [{ body: '' }],
-  };
-}
 
 export default function RecipeFormPage() {
   const { id } = useParams();
@@ -117,16 +44,12 @@ export default function RecipeFormPage() {
   const [parseError, setParseError] = useState('');
 
   // Internal source search
-  const [sourceSearch, setSourceSearch] = useState('');
-  const [sourceResults, setSourceResults] = useState([]);
+  const [sourceSearch, setSourceSearch, sourceResults, setSourceResults] = useRecipeSearch();
   const [sourceSelected, setSourceSelected] = useState(null);
-  const sourceTimer = useRef(null);
 
   // Inspo search
-  const [inspoSearch, setInspoSearch] = useState('');
-  const [inspoResults, setInspoResults] = useState([]);
+  const [inspoSearch, setInspoSearch, inspoResults, setInspoResults] = useRecipeSearch();
   const [inspoSelected, setInspoSelected] = useState(null);
-  const inspoTimer = useRef(null);
 
   const {
     register, control, handleSubmit, watch, setValue, getValues, reset,
@@ -153,8 +76,7 @@ export default function RecipeFormPage() {
     async function load() {
       try {
         if (mode === 'edit') {
-          const res = await api.get(`/posts/${id}`);
-          const post = res.data ?? res;
+          const post = await api.get(`/posts/${id}`);
           const vals = mapPostToDefaults(post);
           reset(vals);
           if (post.image_url) setImagePreview(post.image_url);
@@ -162,8 +84,7 @@ export default function RecipeFormPage() {
           if (post.inspo_post) setInspoSelected(post.inspo_post);
         } else {
           // cook mode
-          const res = await api.get(`/posts/recipe/cook/${id}`);
-          const src = res.data ?? res;
+          const src = await api.get(`/posts/recipe/cook/${id}`);
           setSourcePost(src);
           reset(mapCookToDefaults(src));
           const fallback = src.image_url || src.parsed_image_url || '';
@@ -172,8 +93,7 @@ export default function RecipeFormPage() {
           // Find the user's "Cooked" box
           if (user?.id) {
             try {
-              const boxRes = await api.get(`/users/${user.id}/boxes`);
-              const boxes = boxRes.data ?? boxRes;
+              const boxes = await api.get(`/users/${user.id}/boxes`);
               const cooked = boxes.find(
                 b => b.box_type === 'cooked' || b.name?.toLowerCase() === 'cooked',
               );
@@ -189,32 +109,7 @@ export default function RecipeFormPage() {
     }
 
     load();
-  }, [mode, id]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  // ── Search helpers ───────────────────────────────────────────────────────
-  function handleSourceSearch(q) {
-    setSourceSearch(q);
-    clearTimeout(sourceTimer.current);
-    if (!q.trim()) { setSourceResults([]); return; }
-    sourceTimer.current = setTimeout(async () => {
-      try {
-        const res = await api.get(`/search/recipes?q=${encodeURIComponent(q)}`);
-        setSourceResults((res.data ?? res).slice(0, 8));
-      } catch { /* ignore */ }
-    }, 300);
-  }
-
-  function handleInspoSearch(q) {
-    setInspoSearch(q);
-    clearTimeout(inspoTimer.current);
-    if (!q.trim()) { setInspoResults([]); return; }
-    inspoTimer.current = setTimeout(async () => {
-      try {
-        const res = await api.get(`/search/recipes?q=${encodeURIComponent(q)}`);
-        setInspoResults((res.data ?? res).slice(0, 8));
-      } catch { /* ignore */ }
-    }, 300);
-  }
+  }, [mode, id, user?.id]);
 
   // ── Parse URL ────────────────────────────────────────────────────────────
   async function handleParseUrl() {
@@ -223,8 +118,7 @@ export default function RecipeFormPage() {
     setParseLoading(true);
     setParseError('');
     try {
-      const res = await api.post('/parse/recipe', { url });
-      const parsed = res.data ?? res;
+      const parsed = await api.post('/parse/recipe', { url });
       if (parsed.title) setValue('title', parsed.title);
       if (parsed.ingredients?.length) {
         setValue(
@@ -324,11 +218,9 @@ export default function RecipeFormPage() {
 
       let newPost;
       if (mode === 'edit') {
-        const res = await api.patch(`/posts/${id}`, payload);
-        newPost = res.data ?? res;
+        newPost = await api.patch(`/posts/${id}`, payload);
       } else {
-        const res = await api.post('/posts/recipe', payload);
-        newPost = res.data ?? res;
+        newPost = await api.post('/posts/recipe', payload);
         // Auto-save to Cooked box in cook mode
         if (mode === 'cook' && cookedBoxId) {
           try {
@@ -347,11 +239,7 @@ export default function RecipeFormPage() {
 
   // ── Render ───────────────────────────────────────────────────────────────
   if (pageLoading) {
-    return (
-      <div className="flex justify-center items-center min-h-[60vh]">
-        <div className="w-8 h-8 border-4 border-accent border-t-transparent rounded-full animate-spin" />
-      </div>
-    );
+    return <Spinner />;
   }
 
   if (pageError) {
@@ -496,7 +384,7 @@ export default function RecipeFormPage() {
                     onChange={e => {
                       setSourceSelected(null);
                       setValue('source_post_id', null);
-                      handleSourceSearch(e.target.value);
+                      setSourceSearch(e.target.value);
                     }}
                     placeholder="Search CookBook recipes…"
                     className="w-full border border-border rounded px-3 py-2 text-sm text-text bg-surface-input focus:outline-none focus:ring-1 focus:ring-cta"
@@ -552,7 +440,7 @@ export default function RecipeFormPage() {
                   onChange={e => {
                     setInspoSelected(null);
                     setValue('inspo_post_id', null);
-                    handleInspoSearch(e.target.value);
+                    setInspoSearch(e.target.value);
                   }}
                   placeholder="Link to an inspiring recipe on CookBook…"
                   className="w-full border border-border rounded px-3 py-2 text-sm text-text bg-surface-input focus:outline-none focus:ring-1 focus:ring-cta"

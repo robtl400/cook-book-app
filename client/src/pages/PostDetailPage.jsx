@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
+import { Clock, Utensils } from 'lucide-react';
 import { api } from '../utils/api';
+import Spinner from '../components/Spinner';
 import { useAuth } from '../context/AuthContext';
 import StarRating from '../components/StarRating';
 import AttributionBadge from '../components/AttributionBadge';
@@ -39,7 +41,7 @@ export default function PostDetailPage() {
     setError(null);
     api
       .get(`/posts/${id}`)
-      .then((data) => setPost(data.data ?? data))
+      .then((data) => setPost(data))
       .catch((err) => setError(err.message || 'Post not found.'))
       .finally(() => setLoading(false));
   }, [id]);
@@ -48,18 +50,14 @@ export default function PostDetailPage() {
     setDeleting(true);
     try {
       await api.delete(`/posts/${id}`);
-      navigate(-1);
+      navigate('/feed');
     } catch {
       setDeleting(false);
       setShowDeleteConfirm(false);
     }
   }
 
-  if (loading) return (
-    <div className="flex justify-center py-20">
-      <div className="w-10 h-10 border-4 border-accent border-t-transparent rounded-full animate-spin" />
-    </div>
-  );
+  if (loading) return <Spinner size="lg" />;
 
   if (error || !post) {
     return (
@@ -103,10 +101,16 @@ export default function PostDetailPage() {
         <div className="flex flex-wrap items-center gap-3 mb-4">
           <StarRating value={post.self_rating} />
           {post.cook_time_minutes && (
-            <span className="text-sm text-text-muted">⏱ {post.cook_time_minutes} min</span>
+            <span className="flex items-center gap-1.5 text-sm text-text-muted">
+              <Clock size={14} aria-hidden="true" />
+              {post.cook_time_minutes} min
+            </span>
           )}
           {post.servings && (
-            <span className="text-sm text-text-muted">🍴 {post.servings} servings</span>
+            <span className="flex items-center gap-1.5 text-sm text-text-muted">
+              <Utensils size={14} aria-hidden="true" />
+              {post.servings} servings
+            </span>
           )}
           {post.difficulty && <DifficultyBadge difficulty={post.difficulty} />}
           {post.user && (
@@ -201,22 +205,24 @@ export default function PostDetailPage() {
           {user && (
             <button
               onClick={() => setShowSaveModal(true)}
-              className="px-5 py-2.5 bg-cta text-white font-semibold rounded-sm hover:bg-cta-dark transition-colors text-sm"
+              className="px-5 py-3 bg-cta text-white font-semibold rounded-sm hover:bg-cta-dark transition-colors text-sm"
             >
               Save to Box
             </button>
           )}
-          <button
-            onClick={() => navigate(`/posts/${id}/cook`)}
-            className="px-5 py-2.5 border border-border text-accent font-semibold rounded-sm hover:border-accent transition-colors text-sm"
-          >
-            I Cooked This
-          </button>
+          {user && (
+            <button
+              onClick={() => navigate(`/posts/${id}/cook`)}
+              className="px-5 py-3 border border-border text-accent font-semibold rounded-sm hover:border-accent transition-colors text-sm"
+            >
+              I Cooked This
+            </button>
+          )}
           {isOwner && (
             <>
               <button
                 onClick={() => navigate(`/posts/${id}/edit`)}
-                className="px-5 py-2.5 border border-border text-text font-semibold rounded-sm hover:border-cta hover:text-accent transition-colors text-sm"
+                className="px-5 py-3 border border-border text-text font-semibold rounded-sm hover:border-cta hover:text-accent transition-colors text-sm"
               >
                 Edit
               </button>
@@ -240,7 +246,7 @@ export default function PostDetailPage() {
               ) : (
                 <button
                   onClick={() => setShowDeleteConfirm(true)}
-                  className="px-5 py-2.5 border border-red-800/50 text-red-400 font-semibold rounded-sm hover:bg-red-900/20 transition-colors text-sm"
+                  className="px-5 py-3 border border-red-800/50 text-red-400 font-semibold rounded-sm hover:bg-red-900/20 transition-colors text-sm"
                 >
                   Delete
                 </button>

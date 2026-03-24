@@ -68,6 +68,7 @@ Create additional custom boxes for any theme. Removing a recipe from your Recipe
 | Frontend | React 19, Vite 7, React Router v7 |
 | Forms | React Hook Form |
 | Styling | Tailwind CSS v4 (no config file — `@import "tailwindcss"` + `@theme {}` block) |
+| Icons | lucide-react |
 | Notifications | react-hot-toast |
 | Images | Cloudinary (unsigned upload preset) |
 | Deploy | Render (backend) + Netlify (frontend) |
@@ -133,6 +134,7 @@ cook-book-app/
 │   │   ├── components/
 │   │   │   ├── NavBar.jsx
 │   │   │   ├── PostCard.jsx
+│   │   │   ├── Spinner.jsx
 │   │   │   ├── CommentSection.jsx
 │   │   │   ├── SaveToBoxModal.jsx
 │   │   │   ├── StarRating.jsx

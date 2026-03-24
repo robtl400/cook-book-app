@@ -12,3 +12,4 @@ recipe-scrapers>=15.0
 requests>=2.31
 gunicorn>=23.0
 psycopg2-binary>=2.9
+flask-limiter>=3.0

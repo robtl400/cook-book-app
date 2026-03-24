@@ -3,21 +3,8 @@ import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { api } from '../utils/api';
 import { useAuth } from '../context/AuthContext';
+import { timeAgo } from '../utils/time';
 import Spinner from './Spinner';
-
-function timeAgo(dateStr) {
-  const diff = Date.now() - new Date(dateStr).getTime();
-  const mins = Math.floor(diff / 60000);
-  if (mins < 1) return 'just now';
-  if (mins < 60) return `${mins}m ago`;
-  const hours = Math.floor(mins / 60);
-  if (hours < 24) return `${hours}h ago`;
-  const days = Math.floor(hours / 24);
-  if (days < 30) return `${days}d ago`;
-  const months = Math.floor(days / 30);
-  if (months < 12) return `${months}mo ago`;
-  return `${Math.floor(months / 12)}y ago`;
-}
 
 function CommentItem({ comment, postOwnerId, onDelete, depth = 0 }) {
   const { user } = useAuth();
@@ -34,11 +21,10 @@ function CommentItem({ comment, postOwnerId, onDelete, depth = 0 }) {
     if (!replyBody.trim()) return;
     setSubmittingReply(true);
     try {
-      const res = await api.post(`/posts/${comment.post_id}/comments`, {
+      const newReply = await api.post(`/posts/${comment.post_id}/comments`, {
         body: replyBody.trim(),
         parent_id: comment.id,
       });
-      const newReply = res.data ?? res;
       setReplies((prev) => [...prev, newReply]);
       setReplyBody('');
       setReplyOpen(false);
@@ -139,7 +125,7 @@ export default function CommentSection({ postId, postOwnerId }) {
     setLoadError(false);
     api
       .get(`/posts/${postId}/comments`)
-      .then((res) => setComments(res.data ?? res))
+      .then((res) => setComments(res))
       .catch(() => setLoadError(true))
       .finally(() => setLoading(false));
   }, [postId]);
@@ -149,10 +135,9 @@ export default function CommentSection({ postId, postOwnerId }) {
     if (!newBody.trim()) return;
     setSubmitting(true);
     try {
-      const res = await api.post(`/posts/${postId}/comments`, {
+      const comment = await api.post(`/posts/${postId}/comments`, {
         body: newBody.trim(),
       });
-      const comment = res.data ?? res;
       setComments((prev) => [comment, ...prev]);
       setNewBody('');
       toast.success('Comment posted!');
@@ -186,12 +171,14 @@ export default function CommentSection({ postId, postOwnerId }) {
             onChange={(e) => setNewBody(e.target.value)}
             placeholder="Add a comment…"
             rows={3}
+            maxLength={1000}
             className="w-full px-4 py-3 text-sm border border-border rounded bg-surface-input text-text focus:outline-none focus:border-cta resize-none"
           />
+          <p className="text-xs text-text-dim text-right mt-0.5">{newBody.length}/1000</p>
           <div className="flex justify-end mt-2">
             <button
               type="submit"
-              disabled={submitting || !newBody.trim()}
+              disabled={submitting || !newBody.trim() || newBody.length > 1000}
               className="px-5 py-2 text-sm bg-cta text-white rounded-sm hover:bg-cta-dark disabled:opacity-60 transition-colors font-medium"
             >
               {submitting ? 'Posting…' : 'Post comment'}

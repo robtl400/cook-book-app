@@ -26,7 +26,7 @@ export default function MyRecipeBoxPage() {
     api
       .get(`/users/${user.id}/boxes`)
       .then((res) => {
-        const allBoxes = res.data ?? res;
+        const allBoxes = res;
         setBoxes(allBoxes);
         const recipeBox = allBoxes.find((b) => b.box_type === 'liked');
         if (recipeBox) setSelectedBoxId(recipeBox.id);
@@ -43,8 +43,7 @@ export default function MyRecipeBoxPage() {
     api
       .get(`/boxes/${selectedBoxId}`)
       .then((res) => {
-        const data = res.data ?? res;
-        setPosts(data.posts ?? data.entries ?? []);
+        setPosts(res.posts ?? res.entries ?? []);
       })
       .catch((err) => setError(err.message || 'Failed to load recipes.'))
       .finally(() => setPostsLoading(false));

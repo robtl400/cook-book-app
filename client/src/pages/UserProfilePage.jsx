@@ -4,6 +4,7 @@ import toast from 'react-hot-toast';
 import { useAuth } from '../context/AuthContext';
 import { api } from '../utils/api';
 import PostCard from '../components/PostCard';
+import Spinner from '../components/Spinner';
 
 function Avatar({ user, size = 'lg' }) {
   const [imgError, setImgError] = useState(false);
@@ -43,7 +44,7 @@ function EditProfileModal({ profile, onClose, onSave }) {
         bio: bio || undefined,
         profile_image_url: profileImageUrl || undefined,
       });
-      onSave(res.data ?? res);
+      onSave(res);
     } catch (err) {
       setError(err.message ?? 'Could not save changes.');
     } finally {
@@ -128,6 +129,8 @@ export default function UserProfilePage() {
   const [activeTab, setActiveTab] = useState('posts');
   const [posts, setPosts] = useState([]);
   const [postsLoading, setPostsLoading] = useState(false);
+  const [boxes, setBoxes] = useState([]);
+  const [boxesLoading, setBoxesLoading] = useState(false);
 
   // For "View Recipe Box" link on other profiles
   const [recipeBoxId, setRecipeBoxId] = useState(null);
@@ -138,6 +141,7 @@ export default function UserProfilePage() {
   const [followError, setFollowError] = useState('');
 
   const [showEditModal, setShowEditModal] = useState(false);
+  const [retryCount, setRetryCount] = useState(0);
 
   const isOwn = currentUser && String(currentUser.id) === String(id);
 
@@ -147,16 +151,14 @@ export default function UserProfilePage() {
       setLoading(true);
       setError('');
       try {
-        const res = await api.get(`/users/${id}`);
-        const p = res.data ?? res;
+        const p = await api.get(`/users/${id}`);
         setProfile(p);
         setFollowerCount(p.follower_count ?? 0);
 
         // Check if current user follows this profile
         if (currentUser && !isOwn) {
           try {
-            const fRes = await api.get(`/users/${id}/followers`);
-            const followers = fRes.data ?? fRes;
+            const followers = await api.get(`/users/${id}/followers`);
             setIsFollowing(followers.some(f => String(f.id) === String(currentUser.id)));
           } catch { /* ignore */ }
         }
@@ -167,16 +169,26 @@ export default function UserProfilePage() {
       }
     }
     load();
-  }, [id, currentUser?.id]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [id, currentUser?.id, retryCount]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Load posts tab
   useEffect(() => {
     if (activeTab !== 'posts') return;
     setPostsLoading(true);
     api.get(`/users/${id}/posts`)
-      .then(res => setPosts(res.data ?? res))
+      .then(res => setPosts(res))
       .catch(() => setPosts([]))
       .finally(() => setPostsLoading(false));
+  }, [activeTab, id]);
+
+  // Load boxes tab
+  useEffect(() => {
+    if (activeTab !== 'boxes') return;
+    setBoxesLoading(true);
+    api.get(`/users/${id}/boxes`)
+      .then(res => setBoxes(res ?? []))
+      .catch(() => setBoxes([]))
+      .finally(() => setBoxesLoading(false));
   }, [activeTab, id]);
 
   // Load Recipe Box ID for other profiles (for the "View Recipe Box" link)
@@ -184,7 +196,7 @@ export default function UserProfilePage() {
     if (isOwn) return;
     api.get(`/users/${id}/boxes`)
       .then(res => {
-        const allBoxes = res.data ?? res;
+        const allBoxes = res;
         const recipeBox = allBoxes.find(b => b.box_type === 'liked');
         if (recipeBox) setRecipeBoxId(recipeBox.id);
       })
@@ -217,17 +229,19 @@ export default function UserProfilePage() {
   }
 
   if (loading) {
-    return (
-      <div className="flex justify-center items-center min-h-[60vh]">
-        <div className="w-8 h-8 border-4 border-accent border-t-transparent rounded-full animate-spin" />
-      </div>
-    );
+    return <Spinner />;
   }
 
   if (error || !profile) {
     return (
       <div className="max-w-2xl mx-auto px-4 py-10 text-center">
-        <p className="text-red-400">{error || 'Profile not found.'}</p>
+        <p className="text-red-400 mb-4">{error || 'Profile not found.'}</p>
+        <button
+          onClick={() => { setError(''); setRetryCount(c => c + 1); }}
+          className="text-sm text-accent hover:underline"
+        >
+          Try again
+        </button>
       </div>
     );
   }
@@ -292,7 +306,7 @@ export default function UserProfilePage() {
               to={`/boxes/${recipeBoxId}`}
               className="inline-flex items-center gap-1 text-sm text-accent hover:underline mt-3"
             >
-              View My Recipe Box →
+              View Recipe Box →
             </Link>
           ) : null}
         </div>
@@ -310,20 +324,72 @@ export default function UserProfilePage() {
         >
           Recipes
         </button>
+        <button
+          onClick={() => setActiveTab('boxes')}
+          className={`px-5 py-2.5 text-sm font-medium capitalize transition-colors border-b-2 -mb-px ${
+            activeTab === 'boxes'
+              ? 'border-accent text-accent'
+              : 'border-transparent text-text-muted hover:text-text'
+          }`}
+        >
+          Recipe Boxes
+        </button>
       </div>
 
       {/* ── Posts tab ── */}
       {activeTab === 'posts' && (
         postsLoading ? (
-          <div className="flex justify-center py-12">
-            <div className="w-6 h-6 border-4 border-accent border-t-transparent rounded-full animate-spin" />
-          </div>
+          <Spinner size="sm" />
         ) : posts.length === 0 ? (
-          <p className="text-text-muted text-center py-12">No recipes yet.</p>
+          isOwn ? (
+            <div className="flex flex-col items-center justify-center py-24 text-center">
+              <div className="text-5xl mb-4">📖</div>
+              <h2 className="text-xl font-semibold text-text mb-2">Your cookbook is empty</h2>
+              <p className="text-text-muted text-sm mb-6 max-w-xs">
+                Share your first recipe to start building your collection.
+              </p>
+              <Link
+                to="/posts/new"
+                className="px-5 py-2 bg-cta text-white rounded-sm text-sm font-medium hover:opacity-90 transition-opacity"
+              >
+                + New Recipe
+              </Link>
+            </div>
+          ) : (
+            <div className="flex flex-col items-center justify-center py-24 text-center">
+              <div className="text-5xl mb-4">🍳</div>
+              <h2 className="text-xl font-semibold text-text mb-2">No recipes yet</h2>
+              <p className="text-text-muted text-sm max-w-xs">
+                {profile.display_name || profile.username} hasn&apos;t posted any recipes yet.
+              </p>
+            </div>
+          )
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {posts.map(post => (
               <PostCard key={post.id} post={post} />
+            ))}
+          </div>
+        )
+      )}
+
+      {/* ── Boxes tab ── */}
+      {activeTab === 'boxes' && (
+        boxesLoading ? (
+          <Spinner size="sm" />
+        ) : boxes.length === 0 ? (
+          <p className="text-text-muted text-center py-12">No public recipe boxes.</p>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {boxes.map(box => (
+              <Link
+                key={box.id}
+                to={`/boxes/${box.id}`}
+                className="p-4 bg-surface-raised border border-border rounded hover:border-cta/40 transition-all"
+              >
+                <h3 className="font-semibold text-text">{box.name}</h3>
+                <p className="text-sm text-text-muted mt-1">{box.post_count ?? 0} recipes</p>
+              </Link>
             ))}
           </div>
         )
