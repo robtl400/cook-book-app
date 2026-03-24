@@ -72,4 +72,34 @@ describe('PostCard', () => {
 
     expect(screen.getByText('Save to My Recipe Box')).toBeTruthy()
   })
+
+  it('Enter key on card triggers navigation (no crash)', () => {
+    useAuth.mockReturnValue({ user: null })
+    renderPostCard()
+
+    const card = screen.getByRole('button', { name: /Spaghetti Bolognese/i })
+    fireEvent.keyDown(card, { key: 'Enter' })
+
+    expect(screen.getByText('Spaghetti Bolognese')).toBeTruthy()
+  })
+
+  it('Space key on card triggers navigation (no crash)', () => {
+    useAuth.mockReturnValue({ user: null })
+    renderPostCard()
+
+    const card = screen.getByRole('button', { name: /Spaghetti Bolognese/i })
+    fireEvent.keyDown(card, { key: ' ' })
+
+    expect(screen.getByText('Spaghetti Bolognese')).toBeTruthy()
+  })
+
+  it('Tab key on card does not trigger navigation', () => {
+    useAuth.mockReturnValue({ user: null })
+    renderPostCard()
+
+    const card = screen.getByRole('button', { name: /Spaghetti Bolognese/i })
+    fireEvent.keyDown(card, { key: 'Tab' })
+
+    expect(screen.getByText('Spaghetti Bolognese')).toBeTruthy()
+  })
 })
