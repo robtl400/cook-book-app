@@ -191,14 +191,23 @@ export default function SearchResultsPage() {
               </div>
             ) : !hasResults ? (
               <div className="py-16 text-center">
-                <p className="text-lg text-text mb-1">No results found</p>
-                <p className="text-sm text-text-muted">
+                <div className="text-5xl mb-4">🔍</div>
+                <h2 className="text-xl font-semibold text-text mb-2">No results found</h2>
+                <p className="text-text-muted text-sm mb-6 max-w-xs mx-auto">
                   {activeTag
-                    ? `No recipes tagged "${activeTag.name}".`
+                    ? `No recipes tagged "${activeTag.name}". Try a different tag or search term.`
                     : isUserSearch
                     ? `No users match "@${strippedQuery}".`
                     : `No recipes match "${query}". Try a tag filter or a different term.`}
                 </p>
+                {!activeTag && !isUserSearch && (
+                  <Link
+                    to="/explore"
+                    className="px-5 py-2 bg-cta text-white rounded-sm text-sm font-medium hover:opacity-90 transition-opacity"
+                  >
+                    Browse Explore
+                  </Link>
+                )}
               </div>
             ) : (
               <>
