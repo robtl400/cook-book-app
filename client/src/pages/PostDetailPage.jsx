@@ -50,7 +50,7 @@ export default function PostDetailPage() {
     setDeleting(true);
     try {
       await api.delete(`/posts/${id}`);
-      navigate(-1);
+      navigate('/feed');
     } catch {
       setDeleting(false);
       setShowDeleteConfirm(false);
@@ -210,12 +210,14 @@ export default function PostDetailPage() {
               Save to Box
             </button>
           )}
-          <button
-            onClick={() => navigate(`/posts/${id}/cook`)}
-            className="px-5 py-3 border border-border text-accent font-semibold rounded-sm hover:border-accent transition-colors text-sm"
-          >
-            I Cooked This
-          </button>
+          {user && (
+            <button
+              onClick={() => navigate(`/posts/${id}/cook`)}
+              className="px-5 py-3 border border-border text-accent font-semibold rounded-sm hover:border-accent transition-colors text-sm"
+            >
+              I Cooked This
+            </button>
+          )}
           {isOwner && (
             <>
               <button
