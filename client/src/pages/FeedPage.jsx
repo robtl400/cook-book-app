@@ -43,8 +43,18 @@ export default function FeedPage() {
       {loading ? (
         <Spinner />
       ) : error ? (
-        <div className="text-center py-10 text-text-muted">
-          <p>{error}</p>
+        <div className="text-center py-10">
+          <p className="text-text-muted mb-3">{error}</p>
+          <button
+            onClick={() => {
+              setError(null);
+              setLoading(true);
+              loadPosts(0, false).finally(() => setLoading(false));
+            }}
+            className="text-sm text-accent hover:underline"
+          >
+            Try again
+          </button>
         </div>
       ) : posts.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-24 text-center">
